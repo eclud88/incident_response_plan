@@ -1,0 +1,90 @@
+[
+  {
+    "class": "Malicious Code",
+    "types": [
+      { "type": "Infected System" },
+      { "type": "Malware Distribution" },
+      { "type": "C2 Server" },
+      { "type": "Malware Configuration" }
+    ]
+  },
+  {
+    "class": "Availability",
+    "types": [
+      { "type": "Denial of Service" },
+      { "type": "Distributed Denial of Service" },
+      { "type": "Misconfiguration" },
+      { "type": "Sabotage" },
+      { "type": "Outage" }
+    ]
+  },
+  {
+    "class": "Information Gathering",
+    "types": [
+      { "type": "Scanning" },
+      { "type": "Sniffing" },
+      { "type": "Social Engineering" }
+    ]
+  },
+  {
+    "class": "Intrusion",
+    "types": [
+      { "type": "Privileged Account Compromise" },
+      { "type": "Non-Privileged Account Compromise" },
+      { "type": "Application Compromise" },
+      { "type": "System Compromise" },
+      { "type": "Break-In" }
+    ]
+  },
+  {
+    "class": "Intrusion Attempt",
+    "types": [
+      { "type": "Vulnerability Exploitation" },
+      { "type": "Login Attempt" },
+      { "type": "New Attack Signature" }
+    ]
+  },
+  {
+    "class": "Information Security",
+    "types": [
+      { "type": "Unauthorized Access" },
+      { "type": "Unauthorized Modification" },
+      { "type": "Data Loss" },
+      { "type": "Information Exfiltration" }
+    ]
+  },
+  {
+    "class": "Fraud",
+    "types": [
+      { "type": "Misuse or Unauthorized Use of Resources" },
+      { "type": "Copyright Infringement" },
+      { "type": "Illegitimate Use of Third-Party Name" },
+      { "type": "Phishing" }
+    ]
+  },
+  {
+    "class": "Abusive Content",
+    "types": [
+      { "type": "SPAM" },
+      { "type": "Hate Speech" },
+      { "type": "Sexual Exploitation of Minors, Racism, and Incitement to Violence" }
+    ]
+  },
+  {
+    "class": "Vulnerability",
+    "types": [
+      { "type": "Weak Encryption" },
+      { "type": "DDoS Amplifier" },
+      { "type": "Potentially Unwanted Accessible Services" },
+      { "type": "Information Disclosure" },
+      { "type": "Vulnerable System" }
+    ]
+  },
+  {
+    "class": "Other",
+    "types": [
+      { "type": "No Type" },
+      { "type": "Undetermined" }
+    ]
+  }
+]

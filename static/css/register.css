@@ -1,0 +1,120 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #121212;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  color: #fff;
+}
+
+.register-container {
+    background: #1e1e1e;
+    padding: 40px;
+    border: 5px solid #3a8bff;
+    border-radius: 100px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.3);
+    width: 320px;
+    text-align: center;
+    animation: fadeIn 0.7s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+h1 {
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: #ddd;
+  letter-spacing: 1px;
+}
+
+h2 {
+  margin-bottom: 30px;
+  font-size: 19px;
+  color: #fff;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-group i {
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  transform: translateY(-50%);
+  color: #3a8bff;
+  background-color: #2a2a2a;
+  border: 5px solid #3a8bff;
+  border-radius: 50%;
+  font-size: 14px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+input[type="text"],
+input[type="password"] {
+  width: 80%;
+  padding: 14px 20px 14px 55px;
+  border-radius: 30px;
+  border: 5px solid #3a8bff;
+  font-size: 16px;
+  background: #2a2a2a;
+  color: #fff;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus {
+  border-color: #3a8bff;
+  box-shadow: 0 0 8px rgba(58, 139, 255, 0.4);
+}
+
+.register-btn {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background-color: #3a8bff;
+  color: #fff;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+  margin-top: 10px;
+}
+
+.register-btn:hover {
+  background-color: #2f74d1;
+  transform: scale(1.05);
+}
+
+.error {
+  color: #ff6b6b;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.link-text {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #ccc;
+}
+
+.link-text a {
+  color: #3a8bff;
+  text-decoration: none;
+}
+
+.link-text a:hover {
+  text-decoration: underline;
+}

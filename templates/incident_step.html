@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Incident Step {{ step_id }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/incident_step.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+{% if 'user' in session %}
+<nav class="navbar navbar-expand-lg custom-navbar">
+  <a class="navbar-brand" href="{{ url_for('dashboard') }}">Incident Response Manager</a>
+  <div class="ms-auto dropdown">
+    <button class="btn btn-outline-primary dropdown-toggle user-button" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+      {{ session['user'] }}
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+      <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+    </ul>
+  </div>
+</nav>
+{% endif %}
+<div class="dashboard-container">
+
+<div class="step-tabs">
+  {% for i in range(1, total_steps + 1) %}
+    <div class="step-tab {% if i == step_id %}current{% elif i <= completed_steps %}completed{% endif %}">
+      {{ i }}
+    </div>
+  {% endfor %}
+</div>
+
+  <h1>Step {{ step_id }}: {{ step_title }}</h1>
+
+  <form method="POST" enctype="multipart/form-data">
+    {% if substeps %}
+    <div class="substeps">
+      <h3>Substeps:</h3>
+      <ol style="padding-left: 20px;">
+        {% for substep in substeps %}
+          <li style="list-style-position: outside;">
+            <label class="checkbox-container">
+              <input type="checkbox" name="substeps" value="{{ substep }}" onchange="toggleCheckboxStyle(this)">
+              <span class="checkmark"></span> {{ substep }}
+            </label>
+          </li>
+        {% endfor %}
+      </ol>
+    </div>
+    {% endif %}
+
+    <div class="form-group">
+      <label for="evidence">Evidence Description:</label>
+      <textarea id="evidence" name="evidence" rows="5" required>{{ evidence_text }}</textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="file">Attach Evidence File:</label>
+      <input type="file" id="file" name="file" onchange="showUploadFeedback(event)">
+      <div id="upload-feedback" class="upload-feedback">
+        {% if evidence_attachment %}
+          <span class="success"><i class="fa-solid fa-check"></i> File saved: {{ evidence_attachment }}</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="button-bar">
+      <div class="left-buttons">
+        <a href="{{ url_for('new_incident') }}" class="btn btn-back" style="text-decoration: none;">
+          <i class="fa-solid fa-arrow-left"></i> Change Class/Type
+        </a>
+      </div>
+
+      <div class="right-buttons">
+        <button type="submit" name="action" value="save" class="btn btn-save">
+          <i class="fa-solid fa-floppy-disk"></i> Save
+        </button>
+
+        {% if not is_last_step %}
+        <button type="submit" name="action" value="next" class="btn btn-next" {% if not evidence_attachment %}disabled{% endif %}>
+          Next <i class="fa-solid fa-arrow-right"></i>
+        </button>
+        {% else %}
+        <button type="submit" name="action" value="lessons_learned" class="btn btn-next">
+          Lessons Learned <i class="fa-solid fa-arrow-right"></i>
+        </button>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="center-button">
+      <button type="submit" name="action" value="dashboard" class="btn btn-dashboard">
+        <i class="fa-solid fa-house"></i> Dashboard
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+function showUploadFeedback(event) {
+  const feedback = document.getElementById("upload-feedback");
+  const file = event.target.files[0];
+  if (file) {
+    feedback.innerHTML = `<span class="success"><i class="fa-solid fa-check"></i> File ready: ${file.name}</span>`;
+  } else {
+    feedback.innerHTML = `<span class="fail"><i class="fa-solid fa-xmark"></i> Upload failed</span>`;
+  }
+}
+
+function toggleCheckboxStyle(checkbox) {
+  if (checkbox.checked) {
+    checkbox.parentElement.classList.add("checked");
+  } else {
+    checkbox.parentElement.classList.remove("checked");
+  }
+}
+</script>
+</body>
+</html>
+

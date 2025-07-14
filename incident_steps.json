@@ -1,0 +1,2582 @@
+[
+  {
+    "class": "Malicious Code",
+    "types": [
+      {
+        "type": "Infected System",
+        "steps": [
+          {
+            "step": "Identify and isolate the compromised system to prevent further spread.",
+            "sub_steps": [
+              "Verify initial indicators of compromise (e.g., antivirus alerts, anomalous behavior).",
+              "Disconnect the system from the network (physically or logically).",
+              "Tag the device as 'under investigation' to prevent re-use.",
+              "Notify the SOC or incident response team."
+            ]
+          },
+          {
+            "step": "Collect and preserve forensic evidence for analysis.",
+            "sub_steps": [
+              "Create a full disk image and memory dump using trusted tools (e.g., FTK Imager, Volatility).",
+              "Capture relevant logs (e.g., system, application, security logs).",
+              "Record system time and network configuration.",
+              "Store evidence in a tamper-evident, chain-of-custody-controlled location."
+            ]
+          },
+          {
+            "step": "Eradicate malware using appropriate tools and techniques.",
+            "sub_steps": [
+              "Identify malware type (e.g., ransomware, RAT, trojan) via sandbox or AV scanner.",
+              "Use reputable tools (e.g., Malwarebytes, Microsoft Defender, custom scripts) to remove malware.",
+              "Remove or reset malicious registry entries, scheduled tasks, and persistence mechanisms.",
+              "If eradication is not feasible, reimage the system from a clean source."
+            ]
+          },
+          {
+            "step": "Apply security patches and updates to the system.",
+            "sub_steps": [
+              "Verify system is clean before re-connecting to the network.",
+              "Apply OS and application updates to fix known vulnerabilities.",
+              "Ensure endpoint protection (AV/EDR) is active and up to date.",
+              "Remove unnecessary services and user accounts as part of hardening."
+            ]
+          },
+          {
+            "step": "Monitor the system post-remediation to ensure stability.",
+            "sub_steps": [
+              "Reconnect the system in a monitored VLAN or sandbox.",
+              "Enable verbose logging and send logs to SIEM.",
+              "Monitor for Indicators of Compromise (IoCs) recurrence.",
+              "Schedule a follow-up scan and user validation session."
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Malware Distribution",
+        "steps": [
+          {
+            "step": "Detect the distribution vector and scope of the malware.",
+            "sub_steps": [
+              "Analyze logs and alerts to identify malware dissemination.",
+              "Determine infection vectors (e.g., phishing emails, infected websites).",
+              "Map out the spread across endpoints and systems.",
+              "Correlate indicators with threat intelligence sources."
+            ]
+          },
+          {
+            "step": "Block malicious domains, IPs, and email addresses involved.",
+            "sub_steps": [
+              "Extract IoCs from threat intelligence or malware analysis.",
+              "Update firewall and proxy rules to block IoCs.",
+              "Add offending senders and URLs to email security blacklists.",
+              "Share indicators with partners and external stakeholders as needed."
+            ]
+          },
+          {
+            "step": "Notify affected parties and provide guidance on mitigation.",
+            "sub_steps": [
+              "Inform internal and external stakeholders about infection risks.",
+              "Distribute malware removal instructions and updates.",
+              "Coordinate with legal/compliance if notification is mandated.",
+              "Track acknowledgements and responses to guidance."
+            ]
+          },
+          {
+            "step": "Remove malware from affected systems and networks.",
+            "sub_steps": [
+              "Scan systems using updated AV/EDR tools.",
+              "Use manual or automated scripts to remove infections.",
+              "Reimage systems if infection persists or system integrity is doubtful.",
+              "Document remediation actions."
+            ]
+          },
+          {
+            "step": "Review and update security measures to prevent recurrence.",
+            "sub_steps": [
+              "Evaluate security gaps that enabled the spread.",
+              "Apply patches and tighten access controls.",
+              "Enhance user awareness through training.",
+              "Conduct follow-up assessments to verify improvements."
+            ]
+          }
+        ]
+      },
+      {
+        "type": "C2 Server",
+        "steps": [
+          {
+            "step": "Identify communication with Command and Control (C2) servers.",
+            "sub_steps": [
+              "Inspect outbound traffic for known C2 indicators.",
+              "Use threat intel feeds to validate suspicious destinations.",
+              "Review endpoint DNS and HTTP logs for anomalies.",
+              "Deploy packet capture tools to confirm C2 traffic."
+            ]
+          },
+          {
+            "step": "Isolate affected systems to disrupt malicious communication.",
+            "sub_steps": [
+              "Segment or disconnect the affected hosts.",
+              "Prevent lateral movement within the network.",
+              "Tag systems for forensic analysis.",
+              "Alert response team of containment action."
+            ]
+          },
+          {
+            "step": "Block C2 server addresses at the network perimeter.",
+            "sub_steps": [
+              "Add C2 IPs and domains to firewalls and web filters.",
+              "Update IDS/IPS rules with new C2 indicators.",
+              "Enable DNS sinkholing for dynamic or unknown C2s.",
+              "Share indicators with upstream providers if needed."
+            ]
+          },
+          {
+            "step": "Analyze malware behavior and communication patterns.",
+            "sub_steps": [
+              "Reverse engineer samples or consult sandbox reports.",
+              "Document protocols, ports, and persistence mechanisms used.",
+              "Correlate timeline of C2 activity with system behavior.",
+              "Check for data exfiltration or remote access sessions."
+            ]
+          },
+          {
+            "step": "Implement detection rules to identify future C2 activities.",
+            "sub_steps": [
+              "Create SIEM queries and rules based on observed IoCs.",
+              "Deploy custom detection signatures to EDR/NDR tools.",
+              "Test detection efficacy with simulations or red teaming.",
+              "Continuously update rules as new intel is gathered."
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Malware Configuration",
+        "steps": [
+          {
+            "step": "Analyze malware configuration to understand its behavior.",
+            "sub_steps": [
+              "De-obfuscate and extract configuration using forensic tools.",
+              "Identify parameters like target domains, C2 info, schedule, payloads.",
+              "Use malware sandboxes to emulate behavior safely.",
+              "Compare with known malware families for context."
+            ]
+          },
+          {
+            "step": "Identify and disable persistence mechanisms.",
+            "sub_steps": [
+              "Inspect registry keys, services, and scheduled tasks.",
+              "Terminate related processes and disable startup entries.",
+              "Use autoruns tools to audit boot-time programs.",
+              "Reboot system and verify removal of persistence hooks."
+            ]
+          },
+          {
+            "step": "Restore affected systems to a known good state.",
+            "sub_steps": [
+              "Revert to snapshots or clean backup images.",
+              "Validate system integrity using hash comparisons.",
+              "Apply hardening steps post-restoration.",
+              "Re-test functionality before bringing online."
+            ]
+          },
+          {
+            "step": "Update security tools to detect similar configurations.",
+            "sub_steps": [
+              "Submit malware samples to AV/EDR vendors if needed.",
+              "Define YARA rules for specific malware traits.",
+              "Distribute detection logic across SOC tooling.",
+              "Document configurations for future identification."
+            ]
+          },
+          {
+            "step": "Educate users on avoiding malware infections.",
+            "sub_steps": [
+              "Conduct awareness sessions focusing on phishing and downloads.",
+              "Share visual examples of recent malware campaigns.",
+              "Reinforce endpoint hygiene (e.g., updates, AV use).",
+              "Test user response with phishing simulations."
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "class": "Availability",
+    "types": [
+      {
+  "type": "Denial of Service",
+  "steps": [
+    {
+      "step": "Detect and analyze the nature of the DoS attack.",
+      "sub_steps": [
+        "Monitor logs and alerts from firewalls and intrusion detection systems.",
+        "Identify the type of DoS (volumetric, protocol, application layer).",
+        "Correlate attack timeframes with service degradation.",
+        "Assess impacted systems and services."
+      ]
+    },
+    {
+      "step": "Implement rate limiting and filtering to mitigate the attack.",
+      "sub_steps": [
+        "Enable rate limiting on web servers and network devices.",
+        "Apply temporary access control lists (ACLs) or block offending IPs.",
+        "Filter malicious payloads using application-layer firewalls.",
+        "Adjust thresholds based on real-time attack behavior."
+      ]
+    },
+    {
+      "step": "Engage with Internet Service Providers for support.",
+      "sub_steps": [
+        "Share traffic samples or logs with ISP teams.",
+        "Request upstream filtering or traffic redirection assistance.",
+        "Enable blackholing or traffic scrubbing services.",
+        "Maintain communication for status updates."
+      ]
+    },
+    {
+      "step": "Monitor network traffic for ongoing threats.",
+      "sub_steps": [
+        "Use flow analysis tools to watch for traffic anomalies.",
+        "Enable alerts for threshold breaches or suspicious patterns.",
+        "Track changes in attack vectors or intensities.",
+        "Update mitigation strategies as needed."
+      ]
+    },
+    {
+      "step": "Review and strengthen network infrastructure resilience.",
+      "sub_steps": [
+        "Perform a post-attack analysis with network and security teams.",
+        "Deploy redundant systems and load balancing if not present.",
+        "Enhance firewall and WAF configurations.",
+        "Document lessons learned and update incident response plans."
+      ]
+    }
+  ]
+},
+
+      {
+  "type": "Distributed Denial of Service",
+  "steps": [
+    {
+      "step": "Identify the scale and sources of the DDoS attack.",
+      "sub_steps": [
+        "Capture traffic samples during the attack window.",
+        "Analyze source IPs and distribution using flow data.",
+        "Categorize attack traffic by protocol and packet size.",
+        "Identify whether it's botnet-based or amplification-based."
+      ]
+    },
+    {
+      "step": "Activate DDoS mitigation services or appliances.",
+      "sub_steps": [
+        "Enable on-premises or cloud-based DDoS protection services.",
+        "Route traffic through scrubbing centers if available.",
+        "Tune detection thresholds based on baseline traffic.",
+        "Verify effectiveness of mitigation actions in real time."
+      ]
+    },
+    {
+      "step": "Coordinate with upstream providers to filter traffic.",
+      "sub_steps": [
+        "Report the incident to ISPs and request cooperation.",
+        "Provide IoCs and detailed traffic signatures.",
+        "Engage in BGP route updates or null-routing if appropriate.",
+        "Follow up on filtering rule enforcement and results."
+      ]
+    },
+    {
+      "step": "Implement access controls to limit exposure.",
+      "sub_steps": [
+        "Apply geo-blocking or ASN-based restrictions temporarily.",
+        "Use CAPTCHAs or rate limits for exposed services.",
+        "Reduce service surface area during high-risk periods.",
+        "Implement failover and backup access options."
+      ]
+    },
+    {
+      "step": "Conduct a post-incident analysis to improve defenses.",
+      "sub_steps": [
+        "Summarize the nature and impact of the attack.",
+        "Evaluate effectiveness of defense mechanisms used.",
+        "Identify improvement areas in incident response and infrastructure.",
+        "Update documentation, detection rules, and training materials."
+      ]
+    }
+  ]
+},
+
+      {
+  "type": "Misconfiguration",
+  "steps": [
+    {
+      "step": "Detect and document the misconfiguration issue.",
+      "sub_steps": [
+        "Review system logs, alerts, and user-reported issues.",
+        "Run automated configuration scanning tools.",
+        "Identify deviation from baseline configurations.",
+        "Log the issue with time and responsible asset."
+      ]
+    },
+    {
+      "step": "Revert to previous known good configurations.",
+      "sub_steps": [
+        "Retrieve validated configuration backups.",
+        "Apply rollback through management tools (e.g., Ansible, SCCM).",
+        "Confirm rollback is successful via verification checks.",
+        "Ensure no dependent systems are negatively affected."
+      ]
+    },
+    {
+      "step": "Apply proper configuration settings as per best practices.",
+      "sub_steps": [
+        "Follow vendor and CIS hardening guides.",
+        "Limit access and enable logging where necessary.",
+        "Test settings in a staging environment before applying to production.",
+        "Seek peer review before finalizing changes."
+      ]
+    },
+    {
+      "step": "Validate system functionality post-correction.",
+      "sub_steps": [
+        "Conduct functionality and integration tests.",
+        "Monitor logs and alerts for reoccurrence of the issue.",
+        "Confirm with end users that services are operational.",
+        "Ensure configuration changes are persistent across reboots."
+      ]
+    },
+    {
+      "step": "Implement configuration management controls.",
+      "sub_steps": [
+        "Enforce change control processes with documentation.",
+        "Adopt tools for automated and version-controlled configurations.",
+        "Periodically review and audit system configurations.",
+        "Train administrators on secure configuration standards."
+      ]
+    }
+  ]
+},
+
+      {
+  "type": "Sabotage",
+  "steps": [
+    {
+      "step": "Identify indicators of intentional disruption.",
+      "sub_steps": [
+        "Correlate timeline of system failure with user or admin actions.",
+        "Look for signs of tampering in logs, scripts, or physical access.",
+        "Check user access records for anomalies.",
+        "Analyze motive and potential insider risk context."
+      ]
+    },
+    {
+      "step": "Isolate affected systems to prevent further damage.",
+      "sub_steps": [
+        "Disconnect or contain compromised assets.",
+        "Prevent access to additional critical systems.",
+        "Apply deny-all rules for involved accounts/IPs.",
+        "Initiate forensic acquisition of affected systems."
+      ]
+    },
+    {
+      "step": "Engage legal and human resources departments as needed.",
+      "sub_steps": [
+        "Report suspected sabotage to internal authorities.",
+        "Preserve evidence per chain-of-custody protocols.",
+        "Initiate internal HR protocols (interviews, suspensions).",
+        "Consult legal team regarding liability and next steps."
+      ]
+    },
+    {
+      "step": "Restore systems from trusted backups.",
+      "sub_steps": [
+        "Validate integrity of backup images before restoration.",
+        "Use backup versions that predate the sabotage.",
+        "Limit access to restoration teams.",
+        "Monitor restored systems closely post-recovery."
+      ]
+    },
+    {
+      "step": "Review and enhance insider threat detection mechanisms.",
+      "sub_steps": [
+        "Implement behavior analytics for privileged users.",
+        "Expand audit logging and alerting for critical actions.",
+        "Review background checks and staff monitoring practices.",
+        "Educate staff about acceptable use and consequences."
+      ]
+    }
+  ]
+},
+      {
+        "type": "Outage",
+        "steps": [
+          {
+            "step": "Determine the cause and scope of the outage.",
+            "sub_steps": [
+              "Review logs and monitor system health indicators.",
+              "Contact affected users and teams for symptom reports.",
+              "Check for correlations with known incidents or updates.",
+              "Assess whether the outage is isolated or systemic."
+            ]
+          },
+          {
+            "step": "Implement contingency plans to maintain operations.",
+            "sub_steps": [
+              "Failover to backup systems where possible.",
+              "Switch to manual processes if necessary.",
+              "Notify relevant departments of contingency activation.",
+              "Prioritize critical services for recovery."
+            ]
+          },
+          {
+            "step": "Restore services using backup systems or resources.",
+            "sub_steps": [
+              "Bring online redundant or cloud-hosted systems.",
+              "Apply validated configuration and data snapshots.",
+              "Test services before full user access.",
+              "Communicate availability as systems come online."
+            ]
+          },
+          {
+            "step": "Communicate status updates to stakeholders.",
+            "sub_steps": [
+              "Send initial notification with impact overview.",
+              "Provide regular progress updates.",
+              "Document root cause findings post-recovery.",
+              "Close the incident with lessons learned summary."
+            ]
+          },
+          {
+            "step": "Analyze the incident to prevent future occurrences.",
+            "sub_steps": [
+              "Conduct a root cause analysis meeting.",
+              "Identify gaps in systems, procedures, or training.",
+              "Update contingency and disaster recovery plans.",
+              "Schedule preventative maintenance or upgrades."
+            ]
+          }
+        ]
+      }
+  ]
+},
+      {
+        "class": "Information Gathering",
+        "types": [
+          {
+            "type": "Scanning",
+            "steps": [
+              {
+                "step": "Detect scanning activities through logs and alerts.",
+                "sub_steps": [
+                  "Enable alerts for port scans, ping sweeps, and enumeration attempts.",
+                  "Correlate events across firewalls, IDS/IPS, and the SIEM.",
+                  "Classify the type of scan (e.g., TCP SYN, UDP, full connect, Nmap-based).",
+                  "Log the date/time, source, and target of the scan activity."
+                ]
+              },
+              {
+                "step": "Identify source IP addresses and scan patterns.",
+                "sub_steps": [
+                  "Analyze network logs for repetitive or systematic access attempts.",
+                  "Extract and group source IPs exhibiting scanning behavior.",
+                  "Determine whether the scan originates internally or externally.",
+                  "Enrich IP data using threat intelligence or WHOIS services."
+                ]
+              },
+              {
+                "step": "Block or rate-limit suspicious IPs at the firewall.",
+                "sub_steps": [
+                  "Create temporary firewall rules to deny traffic from malicious IPs.",
+                  "Apply rate limiting to exposed interfaces or services.",
+                  "Log all rule changes for audit purposes.",
+                  "Coordinate with network teams to avoid unintentional disruptions."
+                ]
+              },
+              {
+                "step": "Monitor for signs of exploitation following scans.",
+                "sub_steps": [
+                  "Enable detailed logging on systems and services targeted during the scan.",
+                  "Review connection attempts or payload deliveries that followed scanning activity.",
+                  "Correlate scan indicators with known vulnerability signatures.",
+                  "Escalate the incident if exploitation attempts are confirmed."
+                ]
+              },
+              {
+                "step": "Update intrusion detection systems with new signatures.",
+                "sub_steps": [
+                  "Create detection rules based on scan patterns or IPs.",
+                  "Test new signatures to minimize false positives.",
+                  "Deploy updated signatures to IDS/IPS across environments.",
+                  "Share indicators of compromise (IoCs) with trusted threat intelligence sources."
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Sniffing",
+            "steps": [
+              {
+                "step": "Identify unauthorized packet capturing on the network.",
+                "sub_steps": [
+                  "Use network monitoring tools to detect promiscuous mode interfaces or unexpected traffic capture.",
+                  "Analyze ARP behavior, MAC flooding, or anomalies in switch port statistics.",
+                  "Look for signs of interface mirroring or span misuse.",
+                  "Generate alerts for suspicious sniffing signatures or known sniffing tools."
+                ]
+              },
+              {
+                "step": "Locate and remove rogue sniffing devices.",
+                "sub_steps": [
+                  "Trace the physical location or MAC address of the rogue device.",
+                  "Use switch port mapping or endpoint discovery to pinpoint the asset.",
+                  "Disconnect or quarantine the device immediately.",
+                  "Capture forensic images and logs for further analysis and possible legal action."
+                ]
+              },
+              {
+                "step": "Encrypt sensitive network traffic to prevent interception.",
+                "sub_steps": [
+                  "Implement TLS for all internal and external web communications.",
+                  "Use VPN tunnels for remote or sensitive access.",
+                  "Deploy end-to-end encryption for application-layer protocols.",
+                  "Disable legacy protocols or services that transmit data in plaintext (e.g., FTP, Telnet)."
+                ]
+              },
+              {
+                "step": "Implement network segmentation to limit exposure.",
+                "sub_steps": [
+                  "Segment internal networks by trust level, function, or data classification.",
+                  "Restrict inter-VLAN routing and lateral movement.",
+                  "Use firewall rules and ACLs to enforce segmentation boundaries.",
+                  "Monitor traffic between segments for policy violations or suspicious activity."
+                ]
+              },
+              {
+                "step": "Conduct regular audits to detect sniffing activities.",
+                "sub_steps": [
+                  "Schedule periodic scans for unauthorized monitoring tools and interfaces.",
+                  "Review switch configurations and logs for port mirroring changes.",
+                  "Verify endpoint configurations against a known baseline.",
+                  "Test detection processes through internal red-teaming or simulated sniffing attempts."
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Social Engineering",
+            "steps": [
+              {
+                "step": "Educate users to recognize and report social engineering attempts.",
+                "sub_steps": [
+                  "Conduct mandatory training sessions on common social engineering tactics (e.g., phishing, pretexting, baiting).",
+                  "Distribute real-world examples of recent social engineering incidents.",
+                  "Provide users with guidance on how and where to report suspicious interactions.",
+                  "Reinforce reporting through posters, intranet reminders, and simulated campaigns."
+                ]
+              },
+              {
+                "step": "Implement multi-factor authentication to reduce risk.",
+                "sub_steps": [
+                  "Enforce MFA for all remote access and privileged accounts.",
+                  "Integrate MFA with email, VPN, cloud services, and identity providers.",
+                  "Avoid SMS-based MFA where possible; prefer app- or token-based methods.",
+                  "Monitor for MFA bypass attempts and enforce lockout policies."
+                ]
+              },
+              {
+                "step": "Monitor for unusual access patterns or requests.",
+                "sub_steps": [
+                  "Use behavioral analytics tools to detect anomalous login activity.",
+                  "Flag repeated access requests to sensitive systems or data.",
+                  "Alert on unusual times, geolocations, or device fingerprints.",
+                  "Correlate access attempts with known phishing or scam reports."
+                ]
+              },
+              {
+                "step": "Investigate reported incidents promptly.",
+                "sub_steps": [
+                  "Acknowledge user reports and triage for urgency and credibility.",
+                  "Analyze emails, messages, or calls involved in the reported event.",
+                  "Isolate affected systems or accounts as needed.",
+                  "Document findings and notify appropriate teams or authorities."
+                ]
+              },
+              {
+                "step": "Update security awareness training regularly.",
+                "sub_steps": [
+                  "Review training content quarterly to reflect current threat landscape.",
+                  "Incorporate lessons learned from real incidents within the organization.",
+                  "Tailor training based on roles, departments, and risk levels.",
+                  "Evaluate effectiveness with periodic testing and feedback collection."
+                ]
+              }
+            ]
+          }
+          ]
+          },
+          {
+            "class": "Intrusion",
+            "types": [
+              {
+                "type": "Privileged Account Compromise",
+                "steps": [
+                  {
+                    "step": "Detect unauthorized use of privileged accounts.",
+                    "sub_steps": [
+                      "Enable alerts for anomalous privileged activity (e.g., unusual logins, mass changes, off-hours access).",
+                      "Use SIEM tools to monitor authentication logs, admin activity, and changes to system configurations.",
+                      "Check for privilege escalation from standard user accounts.",
+                      "Cross-reference activity with user identity and expected behavior."
+                    ]
+                  },
+                  {
+                    "step": "Immediately disable compromised accounts.",
+                    "sub_steps": [
+                      "Revoke access to the affected privileged accounts via identity management systems.",
+                      "Terminate active sessions linked to the compromised credentials.",
+                      "Disable account re-use until the investigation is complete.",
+                      "Log and notify stakeholders of the account shutdown."
+                    ]
+                  },
+                  {
+                    "step": "Investigate the method of compromise.",
+                    "sub_steps": [
+                      "Review recent login history, IP addresses, and devices used.",
+                      "Analyze phishing attempts, credential leaks, or malware indicators tied to the incident.",
+                      "Inspect endpoint telemetry and audit logs from affected systems.",
+                      "Determine whether credentials were reused or brute-forced."
+                    ]
+                  },
+                  {
+                    "step": "Reset credentials and review access permissions.",
+                    "sub_steps": [
+                      "Generate new, strong passwords or keys for affected accounts.",
+                      "Force password changes for potentially exposed accounts.",
+                      "Audit group memberships and access roles for overprovisioning.",
+                      "Remove unnecessary admin rights following the principle of least privilege."
+                    ]
+                  },
+                  {
+                    "step": "Implement stricter access controls and monitoring.",
+                    "sub_steps": [
+                      "Enable just-in-time (JIT) or temporary privilege elevation tools.",
+                      "Deploy privileged access management (PAM) solutions if not already in use.",
+                      "Ensure multi-factor authentication (MFA) is enforced for all admin accounts.",
+                      "Establish continuous monitoring and periodic access reviews for privileged users."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Non-Privileged Account Compromise",
+                "steps": [
+                  {
+                    "step": "Identify signs of unauthorized access to user accounts.",
+                    "sub_steps": [
+                      "Review login logs for anomalies such as unusual times, IP geolocation mismatches, or device changes.",
+                      "Look for brute-force attempts, multiple failed logins, or unexpected 2FA challenges.",
+                      "Monitor for outbound spam, file exfiltration, or privilege escalation attempts from user accounts.",
+                      "Use alerts from email, VPN, and cloud systems to identify suspicious behavior."
+                    ]
+                  },
+                  {
+                    "step": "Force password resets for affected accounts.",
+                    "sub_steps": [
+                      "Immediately lock affected accounts to prevent further access.",
+                      "Enforce secure password reset through a trusted and verified method.",
+                      "Notify users of the incident and explain the reason for the reset.",
+                      "Invalidate active sessions and authentication tokens (e.g., OAuth, SSO)."
+                    ]
+                  },
+                  {
+                    "step": "Analyze logs to determine the breach source.",
+                    "sub_steps": [
+                      "Correlate access events with phishing emails, credential stuffing, or malware alerts.",
+                      "Check for known data breaches where the credentials may have been leaked.",
+                      "Inspect endpoints used during unauthorized access for malware or keyloggers.",
+                      "Determine whether lateral movement or privilege escalation occurred."
+                    ]
+                  },
+                  {
+                    "step": "Educate users on secure password practices.",
+                    "sub_steps": [
+                      "Distribute guidelines on creating strong, unique passwords or passphrases.",
+                      "Encourage use of password managers for secure storage and generation.",
+                      "Remind users not to reuse passwords across systems or services.",
+                      "Include training on identifying phishing and social engineering attempts."
+                    ]
+                  },
+                  {
+                    "step": "Enhance login monitoring and alerting mechanisms.",
+                    "sub_steps": [
+                      "Enable alerts for unusual login behavior, such as location changes or multiple failures.",
+                      "Deploy MFA for all user accounts to reduce reliance on passwords.",
+                      "Implement throttling and account lockout policies for failed login attempts.",
+                      "Integrate logs from cloud and on-prem systems into a centralized monitoring platform."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Application Compromise",
+                "steps": [
+                  {
+                    "step": "Detect anomalies indicating application compromise.",
+                    "sub_steps": [
+                      "Monitor for unexpected application behavior such as abnormal resource usage, code injection, or unauthorized access.",
+                      "Review web server logs, WAF alerts, and application error messages for suspicious activity.",
+                      "Scan for known Indicators of Compromise (IoCs), such as tampered files or injected scripts.",
+                      "Use runtime application self-protection (RASP) or EDR tools to detect behavioral anomalies."
+                    ]
+                  },
+                  {
+                    "step": "Isolate affected applications from the network.",
+                    "sub_steps": [
+                      "Remove the application server or service from the production network segment.",
+                      "Restrict inbound and outbound communication to the compromised system.",
+                      "Alert internal stakeholders about the isolation action.",
+                      "Preserve the application state and logs for forensic analysis."
+                    ]
+                  },
+                  {
+                    "step": "Patch vulnerabilities exploited during the attack.",
+                    "sub_steps": [
+                      "Identify CVEs or misconfigurations exploited during the compromise.",
+                      "Apply vendor-released patches or configuration changes to address the flaws.",
+                      "Validate the patch in a staging environment before production deployment.",
+                      "Review and harden exposed components, such as APIs or plugins."
+                    ]
+                  },
+                  {
+                    "step": "Restore applications from secure backups.",
+                    "sub_steps": [
+                      "Select a backup taken before the compromise occurred.",
+                      "Validate the integrity and authenticity of the backup image.",
+                      "Apply restored data to a clean, patched system environment.",
+                      "Test full functionality before reintroducing the application to production."
+                    ]
+                  },
+                  {
+                    "step": "Conduct code reviews to identify security weaknesses.",
+                    "sub_steps": [
+                      "Perform static and dynamic code analysis on compromised and related components.",
+                      "Look for insecure coding practices (e.g., input validation, authentication flaws).",
+                      "Engage development teams for manual code inspection where needed.",
+                      "Document findings and update secure coding standards."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "System Compromise",
+                "steps": [
+                  {
+                    "step": "Identify compromised systems through alerts and logs.",
+                    "sub_steps": [
+                      "Monitor security tools such as EDR, SIEM, and antivirus for suspicious behavior or confirmed detections.",
+                      "Correlate alerts across systems to pinpoint affected hosts.",
+                      "Review authentication logs, system changes, and user activity around the time of the alert.",
+                      "Tag potentially compromised systems for investigation."
+                    ]
+                  },
+                  {
+                    "step": "Disconnect affected systems to prevent spread.",
+                    "sub_steps": [
+                      "Isolate the system by removing it from the network or placing it in a quarantine VLAN.",
+                      "Disable wireless or remote access interfaces if applicable.",
+                      "Prevent the compromised system from communicating with other internal or external assets.",
+                      "Log and document the containment action for forensic purposes."
+                    ]
+                  },
+                  {
+                    "step": "Perform forensic analysis to understand the breach.",
+                    "sub_steps": [
+                      "Acquire disk and memory images using trusted forensic tools.",
+                      "Analyze logs, installed software, persistence mechanisms, and user accounts for signs of compromise.",
+                      "Identify the attack vector and any lateral movement or privilege escalation.",
+                      "Preserve evidence and document findings for incident reporting or legal action."
+                    ]
+                  },
+                  {
+                    "step": "Rebuild systems using clean images.",
+                    "sub_steps": [
+                      "Use a validated and secure baseline image or golden build for reinstallation.",
+                      "Apply all current patches and security configurations post-rebuild.",
+                      "Restore necessary files and configurations from known clean backups.",
+                      "Re-test system functionality and security before redeployment."
+                    ]
+                  },
+                  {
+                    "step": "Implement continuous monitoring for future threats.",
+                    "sub_steps": [
+                      "Re-enable system logging and integrate it with centralized monitoring solutions.",
+                      "Deploy host-based intrusion detection or EDR agents.",
+                      "Set up alerts for behavioral anomalies and known IoCs.",
+                      "Conduct a post-incident review and adjust security posture as needed."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Break-In",
+                "steps": [
+                  {
+                    "step": "Detect unauthorized access to systems or facilities.",
+                    "sub_steps": [
+                      "Review physical access logs (e.g., badge readers, CCTV footage) for anomalies or tailgating.",
+                      "Monitor systems for unexpected logins, especially outside working hours or from unusual locations.",
+                      "Correlate physical and logical access patterns to identify linked intrusions.",
+                      "Raise alerts immediately upon detecting unauthorized access indicators."
+                    ]
+                  },
+                  {
+                    "step": "Secure entry points and assess damage.",
+                    "sub_steps": [
+                      "Lock down or restrict access to affected rooms, buildings, or systems.",
+                      "Inspect systems, hardware, and physical infrastructure for tampering or theft.",
+                      "Check for backdoors, rogue devices, or altered security settings.",
+                      "Take photos and gather evidence of forced entry or unauthorized use."
+                    ]
+                  },
+                  {
+                    "step": "Engage law enforcement if necessary.",
+                    "sub_steps": [
+                      "Report confirmed break-ins to local or national authorities, as appropriate.",
+                      "Preserve all physical and digital evidence according to chain-of-custody protocols.",
+                      "Assign a point of contact for law enforcement coordination.",
+                      "Follow up on investigation requests and status updates from authorities."
+                    ]
+                  },
+                  {
+                    "step": "Review and enhance physical and cyber security measures.",
+                    "sub_steps": [
+                      "Evaluate how the intruder gained access (e.g., badge clone, unlocked door, weak password).",
+                      "Improve controls such as locks, surveillance, access badges, and authentication systems.",
+                      "Test alarm and response mechanisms regularly.",
+                      "Update incident response and business continuity plans accordingly."
+                    ]
+                  },
+                  {
+                    "step": "Educate staff on security protocols.",
+                    "sub_steps": [
+                      "Reinforce security policies related to physical access and system login hygiene.",
+                      "Train employees on recognizing and reporting suspicious activity.",
+                      "Encourage a culture of accountability and alertness.",
+                      "Conduct drills to assess readiness and improve response times."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Vulnerability Exploitation",
+                "steps": [
+                  {
+                    "step": "Monitor for signs of exploitation attempts.",
+                    "sub_steps": [
+                      "Enable and tune intrusion detection systems (IDS/IPS) to flag exploit behaviors (e.g., buffer overflows, SQL injection).",
+                      "Monitor SIEM dashboards for alerts related to exploit payloads or unusual traffic.",
+                      "Correlate logs across web applications, firewalls, and servers to detect exploitation patterns.",
+                      "Cross-reference observed activity with CVEs and threat intelligence feeds."
+                    ]
+                  },
+                  {
+                    "step": "Apply patches to known vulnerabilities promptly.",
+                    "sub_steps": [
+                      "Identify affected systems and components based on current vulnerability disclosures.",
+                      "Verify vendor patch availability and apply updates in test environments first.",
+                      "Schedule and deploy patches to production with minimal downtime.",
+                      "Document patch status and track remediation metrics across assets."
+                    ]
+                  },
+                  {
+                    "step": "Implement intrusion prevention systems.",
+                    "sub_steps": [
+                      "Deploy IPS solutions at critical ingress and egress points in the network.",
+                      "Apply virtual patching (e.g., signature-based blocking) where real patches are delayed.",
+                      "Enable automated blocking of known exploit traffic (e.g., Metasploit signatures).",
+                      "Continuously update IPS rule sets based on the latest threats."
+                    ]
+                  },
+                  {
+                    "step": "Conduct vulnerability assessments regularly.",
+                    "sub_steps": [
+                      "Use automated scanners to identify exposed and misconfigured systems.",
+                      "Conduct authenticated scans to detect deep application flaws.",
+                      "Review and triage vulnerabilities based on severity, exploitability, and asset value.",
+                      "Report findings to responsible teams and track resolution progress."
+                    ]
+                  },
+                  {
+                    "step": "Educate developers on secure coding practices.",
+                    "sub_steps": [
+                      "Provide regular training on input validation, authentication, and output encoding.",
+                      "Use secure development lifecycle (SDLC) frameworks that include threat modeling.",
+                      "Perform peer code reviews focused on security anti-patterns.",
+                      "Promote the use of static analysis and SAST tools in development pipelines."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Login Attempt",
+                "steps": [
+                  {
+                    "step": "Detect and log failed login attempts.",
+                    "sub_steps": [
+                      "Configure authentication systems to generate logs for every login attempt.",
+                      "Ensure logs capture timestamp, source IP, username, and reason for failure.",
+                      "Set up automated alerting for unusual volumes or patterns of failed logins.",
+                      "Integrate login attempt logs with a Security Information and Event Management (SIEM) system.",
+                      "Regularly review and audit logs for signs of brute force or suspicious activity."
+                    ]
+                  },
+                  {
+                    "step": "Implement account lockout policies after multiple failures.",
+                    "sub_steps": [
+                      "Define a threshold for failed login attempts (e.g., 5 attempts).",
+                      "Configure account lockout duration or require manual administrator unlock.",
+                      "Notify users and administrators when an account lockout occurs.",
+                      "Ensure lockout policies balance security with usability to avoid denial of service.",
+                      "Regularly test the lockout mechanism to ensure proper functioning."
+                    ]
+                  },
+                  {
+                    "step": "Use CAPTCHA to prevent automated login attempts.",
+                    "sub_steps": [
+                      "Integrate CAPTCHA challenges on login pages after a predefined number of failed attempts.",
+                      "Select CAPTCHA solutions that balance security and user accessibility (e.g., audio options).",
+                      "Update CAPTCHA mechanisms regularly to avoid bypass by automated tools.",
+                      "Log CAPTCHA challenge successes and failures for further analysis.",
+                      "Educate users on the purpose and legitimacy of CAPTCHA challenges."
+                    ]
+                  },
+                  {
+                    "step": "Monitor for credential stuffing activities.",
+                    "sub_steps": [
+                      "Use threat intelligence feeds to detect known compromised credentials.",
+                      "Set up detection rules for rapid, repeated login attempts from the same IP or user agent.",
+                      "Employ anomaly detection to identify abnormal login locations or devices.",
+                      "Block IPs or ranges exhibiting suspicious credential stuffing behavior.",
+                      "Coordinate with upstream providers to mitigate distributed attacks."
+                    ]
+                  },
+                  {
+                    "step": "Encourage users to use strong, unique passwords.",
+                    "sub_steps": [
+                      "Implement password complexity and length requirements in authentication policies.",
+                      "Enforce regular password change policies without reusing previous passwords.",
+                      "Provide user education materials on creating and managing strong passwords.",
+                      "Encourage or require multi-factor authentication (MFA) alongside passwords.",
+                      "Deploy password managers or integrate with single sign-on (SSO) solutions to improve usability."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "New Attack Signature",
+                "steps": [
+                  {
+                    "step": "Identify and analyze new attack patterns.",
+                    "sub_steps": [
+                      "Collect and aggregate logs and alerts from IDS/IPS, firewalls, and endpoint detection tools.",
+                      "Correlate unusual or suspicious activity to detect emerging patterns.",
+                      "Perform malware or payload analysis in a sandbox environment if applicable.",
+                      "Use threat intelligence feeds to validate if the pattern matches known or emerging threats.",
+                      "Document characteristics and indicators of compromise (IOCs) related to the new attack."
+                    ]
+                  },
+                  {
+                    "step": "Update security systems with new signatures.",
+                    "sub_steps": [
+                      "Develop or acquire signature definitions based on the analyzed attack patterns.",
+                      "Test new signatures in a controlled environment to minimize false positives.",
+                      "Deploy updated signatures to intrusion detection/prevention systems (IDS/IPS), antivirus, and endpoint security tools.",
+                      "Verify the successful installation and activation of new signatures.",
+                      "Monitor for alerts triggered by the new signatures and adjust thresholds if necessary."
+                    ]
+                  },
+                  {
+                    "step": "Share threat intelligence with relevant parties.",
+                    "sub_steps": [
+                      "Prepare detailed reports including attack indicators, impact, and mitigation strategies.",
+                      "Distribute threat intelligence to internal teams such as SOC, incident response, and risk management.",
+                      "Share validated information with trusted external partners, Information Sharing and Analysis Centers (ISACs), and government entities (e.g., CISA).",
+                      "Update internal knowledge bases and playbooks with the new threat information.",
+                      "Participate in threat intelligence forums and collaborations to enhance collective defense."
+                    ]
+                  },
+                  {
+                    "step": "Monitor for similar attack vectors.",
+                    "sub_steps": [
+                      "Configure security monitoring tools to detect activities resembling the new attack signature.",
+                      "Continuously analyze incoming logs and alerts for signs of related attempts or variants.",
+                      "Implement behavior analytics to catch subtle deviations indicative of attack evolution.",
+                      "Maintain close watch on threat intelligence updates for emerging variants.",
+                      "Escalate and respond rapidly to detected attempts matching the signature."
+                    ]
+                  },
+                  {
+                    "step": "Review and adjust security policies accordingly.",
+                    "sub_steps": [
+                      "Assess current security policies for gaps exposed by the new attack signature.",
+                      "Update access controls, firewall rules, and endpoint protection settings as needed.",
+                      "Enhance user training and awareness programs related to the new threat.",
+                      "Incorporate lessons learned into incident response and disaster recovery plans.",
+                      "Schedule regular policy reviews to keep defenses aligned with evolving threats."
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+
+              {
+                "class": "Information Security",
+                "types": [
+                  {
+                    "type": "Unauthorized Access",
+                    "steps": [
+                      {
+                        "step": "Detect unauthorized access attempts or breaches.",
+                        "sub_steps": [
+                          "Monitor logs from authentication systems, firewalls, and intrusion detection systems.",
+                          "Set up alerts for unusual login times, locations, or devices.",
+                          "Use anomaly detection and user behavior analytics to spot irregular access patterns.",
+                          "Correlate access logs with threat intelligence feeds for known malicious IPs or accounts.",
+                          "Verify alerts with manual or automated investigation tools."
+                        ]
+                      },
+                      {
+                        "step": "Revoke unauthorized access and reset credentials.",
+                        "sub_steps": [
+                          "Immediately disable compromised user accounts or sessions.",
+                          "Force password resets for affected accounts.",
+                          "Revoke or rotate any exposed credentials such as API keys or tokens.",
+                          "Review and remove any unauthorized changes to access privileges.",
+                          "Notify affected users and security teams about remediation actions."
+                        ]
+                      },
+                      {
+                        "step": "Investigate the source and method of access.",
+                        "sub_steps": [
+                          "Analyze logs and forensic data to trace the attack vector.",
+                          "Identify exploited vulnerabilities, phishing attempts, or stolen credentials.",
+                          "Determine the scope of the breach and impacted systems or data.",
+                          "Collect evidence for legal, compliance, or reporting requirements.",
+                          "Document findings and share with incident response and threat intelligence teams."
+                        ]
+                      },
+                      {
+                        "step": "Enhance access controls and authentication mechanisms.",
+                        "sub_steps": [
+                          "Implement or strengthen multi-factor authentication (MFA).",
+                          "Review and apply the principle of least privilege to user roles.",
+                          "Enforce stricter password policies and regular credential rotations.",
+                          "Deploy network segmentation to limit lateral movement.",
+                          "Audit and tighten third-party and remote access configurations."
+                        ]
+                      },
+                      {
+                        "step": "Conduct user training on security best practices.",
+                        "sub_steps": [
+                          "Educate users on phishing, social engineering, and credential hygiene.",
+                          "Promote awareness of suspicious activity reporting procedures.",
+                          "Run simulated phishing campaigns and provide feedback.",
+                          "Update training materials regularly to reflect emerging threats.",
+                          "Measure training effectiveness and adjust programs accordingly."
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Unauthorized Modification",
+                    "steps": [
+                      {
+                        "step": "Identify unauthorized changes to systems or data.",
+                        "sub_steps": [
+                          "Monitor file integrity using hashing and comparison tools.",
+                          "Track changes through system logs and configuration management databases.",
+                          "Set alerts for modifications to critical files, settings, or databases.",
+                          "Use version control systems to detect unexpected code or content changes.",
+                          "Cross-reference with scheduled change management activities to spot anomalies."
+                        ]
+                      },
+                      {
+                        "step": "Restore data from backups to a known good state.",
+                        "sub_steps": [
+                          "Verify the integrity and currency of backup data.",
+                          "Isolate affected systems to prevent further damage.",
+                          "Restore impacted systems and files from trusted backup copies.",
+                          "Perform validation tests to confirm restoration success.",
+                          "Document restoration procedures and outcomes."
+                        ]
+                      },
+                      {
+                        "step": "Determine how the modification occurred.",
+                        "sub_steps": [
+                          "Conduct forensic analysis of logs, file timestamps, and user activity.",
+                          "Identify exploited vulnerabilities, insider threats, or malware infections.",
+                          "Interview relevant personnel and review change requests.",
+                          "Assess if security controls or change management processes failed.",
+                          "Prepare a root cause analysis report for stakeholders."
+                        ]
+                      },
+                      {
+                        "step": "Implement change management controls.",
+                        "sub_steps": [
+                          "Enforce strict approval and documentation for all changes.",
+                          "Use automated tools to manage and audit change requests.",
+                          "Separate duties to prevent unauthorized changes.",
+                          "Integrate security checkpoints into the change management workflow.",
+                          "Regularly review and update change management policies."
+                        ]
+                      },
+                      {
+                        "step": "Monitor for future unauthorized changes.",
+                        "sub_steps": [
+                          "Continuously track system and data integrity with automated tools.",
+                          "Schedule periodic audits and compliance checks.",
+                          "Tune alerts to reduce false positives while catching real threats.",
+                          "Incorporate threat intelligence to anticipate emerging modification techniques.",
+                          "Report suspicious activity promptly to incident response teams."
+                        ]
+                      }
+                    ]
+                  },
+              {
+                "type": "Data Loss",
+                "steps": [
+                  {
+                    "step": "Assess the extent and impact of data loss.",
+                    "sub_steps": [
+                      "Identify affected systems, databases, or storage locations.",
+                      "Determine the types and sensitivity of data lost or corrupted.",
+                      "Evaluate operational impact and potential regulatory consequences.",
+                      "Check logs and alerts for timing and scope of data loss events.",
+                      "Document findings and notify stakeholders."
+                    ]
+                  },
+                  {
+                    "step": "Recover lost data from backups if available.",
+                    "sub_steps": [
+                      "Verify integrity and recency of backup data.",
+                      "Isolate affected systems to prevent further data loss.",
+                      "Restore data from trusted backups following established procedures.",
+                      "Test restored data for completeness and accuracy.",
+                      "Log the recovery process and validate system functionality."
+                    ]
+                  },
+                  {
+                    "step": "Identify the cause of data loss.",
+                    "sub_steps": [
+                      "Analyze system and application logs for errors or suspicious activity.",
+                      "Investigate possible hardware failures or software bugs.",
+                      "Check for malicious activity such as ransomware or insider threats.",
+                      "Review recent changes or updates that may have contributed.",
+                      "Prepare a root cause analysis report."
+                    ]
+                  },
+                  {
+                    "step": "Implement data loss prevention measures.",
+                    "sub_steps": [
+                      "Deploy or enhance Data Loss Prevention (DLP) technologies.",
+                      "Restrict user permissions to access sensitive data based on least privilege.",
+                      "Enable encryption for data at rest and in transit.",
+                      "Regularly back up critical data with secure, offsite storage.",
+                      "Train employees on data handling best practices."
+                    ]
+                  },
+                  {
+                    "step": "Review and update data handling policies.",
+                    "sub_steps": [
+                      "Assess current policies for gaps or weaknesses revealed by the incident.",
+                      "Incorporate lessons learned and new regulatory requirements.",
+                      "Update data classification and handling procedures.",
+                      "Communicate policy changes to all relevant personnel.",
+                      "Schedule periodic reviews to maintain policy effectiveness."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Information Exfiltration",
+                "steps": [
+                  {
+                    "step": "Detect unusual data transfer activities.",
+                    "sub_steps": [
+                      "Monitor network traffic for large or irregular outbound transfers.",
+                      "Use behavioral analytics to detect abnormal data flows or user activities.",
+                      "Correlate events with threat intelligence indicators.",
+                      "Set up alerts for unauthorized use of removable media or cloud storage.",
+                      "Review logs from proxy servers, firewalls, and data loss prevention tools."
+                    ]
+                  },
+                  {
+                    "step": "Identify and isolate systems involved in exfiltration.",
+                    "sub_steps": [
+                      "Trace the source of suspicious data transfers using logs and network analysis.",
+                      "Isolate compromised endpoints or servers from the network.",
+                      "Disable affected user accounts or credentials temporarily.",
+                      "Collect forensic evidence from involved systems.",
+                      "Engage incident response team for containment."
+                    ]
+                  },
+                  {
+                    "step": "Determine the data that was exfiltrated.",
+                    "sub_steps": [
+                      "Review logs and system snapshots to identify accessed and transferred files.",
+                      "Cross-check with data classification to assess sensitivity.",
+                      "Evaluate if personally identifiable information (PII), intellectual property, or other critical data was affected.",
+                      "Document exfiltrated data details for reporting and remediation.",
+                      "Coordinate with legal and compliance teams on data breach notification obligations."
+                    ]
+                  },
+                  {
+                    "step": "Notify affected parties and authorities as required.",
+                    "sub_steps": [
+                      "Prepare incident reports with clear, factual summaries.",
+                      "Notify internal leadership, affected business units, and stakeholders.",
+                      "Comply with regulatory and contractual breach notification timelines.",
+                      "Engage law enforcement or cybersecurity agencies if applicable.",
+                      "Communicate transparently with customers or partners as appropriate."
+                    ]
+                  },
+                  {
+                    "step": "Strengthen data security and monitoring controls.",
+                    "sub_steps": [
+                      "Review and enhance network segmentation and access controls.",
+                      "Implement or improve encryption for sensitive data.",
+                      "Upgrade or fine-tune DLP and intrusion detection systems.",
+                      "Conduct regular security assessments and penetration testing.",
+                      "Increase user awareness training focused on data protection."
+                  ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "class": "Fraud",
+            "types": [
+              {
+                "type": "Misuse or Unauthorized Use of Resources",
+                "steps": [
+                  {
+                    "step": "Monitor for unusual resource usage patterns.",
+                    "sub_steps": [
+                      "Set baseline metrics for normal resource consumption (CPU, bandwidth, storage).",
+                      "Use automated monitoring tools to flag deviations from baselines.",
+                      "Analyze usage logs for spikes or irregular access times.",
+                      "Correlate resource usage with user activities and access logs.",
+                      "Trigger alerts on suspicious or unexpected resource consumption."
+                    ]
+                  },
+                  {
+                    "step": "Investigate and confirm unauthorized use.",
+                    "sub_steps": [
+                      "Review flagged incidents for validity and context.",
+                      "Interview users or system owners where applicable.",
+                      "Examine related system logs, access records, and audit trails.",
+                      "Identify if the misuse was intentional or accidental.",
+                      "Document findings and classify the severity of misuse."
+                    ]
+                  },
+                  {
+                    "step": "Terminate unauthorized activities and access.",
+                    "sub_steps": [
+                      "Immediately disable or restrict user accounts involved.",
+                      "Stop running unauthorized processes or services.",
+                      "Isolate affected systems from critical network segments.",
+                      "Reset credentials or keys if compromised.",
+                      "Monitor to confirm cessation of unauthorized activities."
+                    ]
+                  },
+                  {
+                    "step": "Implement usage policies and monitoring tools.",
+                    "sub_steps": [
+                      "Develop or update acceptable use policies covering resources.",
+                      "Deploy tools for continuous usage monitoring and anomaly detection.",
+                      "Automate enforcement actions based on policy violations.",
+                      "Schedule periodic audits to ensure policy adherence.",
+                      "Integrate policy awareness in onboarding and user training."
+                    ]
+                  },
+                  {
+                    "step": "Educate users on acceptable use policies.",
+                    "sub_steps": [
+                      "Conduct regular training sessions on resource usage guidelines.",
+                      "Provide easy-to-access policy documents and FAQs.",
+                      "Use real-life examples of misuse consequences to reinforce awareness.",
+                      "Promote channels for users to report suspicious activities.",
+                      "Evaluate training effectiveness and update content periodically."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Copyright Infringement",
+                "steps": [
+                  {
+                    "step": "Identify unauthorized use of copyrighted materials.",
+                    "sub_steps": [
+                      "Monitor digital assets and content repositories for unlicensed use.",
+                      "Use automated content scanning tools to detect infringement.",
+                      "Leverage copyright databases and fingerprinting technologies.",
+                      "Investigate reports or complaints from rights holders or users.",
+                      "Document all identified instances with evidence."
+                    ]
+                  },
+                  {
+                    "step": "Remove infringing content promptly.",
+                    "sub_steps": [
+                      "Take down unauthorized materials from internal systems and websites.",
+                      "Block access to infringing external sources if applicable.",
+                      "Notify responsible users or departments about the removal.",
+                      "Archive records of removal actions for compliance purposes.",
+                      "Verify removal effectiveness and absence of residual copies."
+                    ]
+                  },
+                  {
+                    "step": "Notify involved parties of the infringement.",
+                    "sub_steps": [
+                      "Inform rights holders about identified infringement and actions taken.",
+                      "Communicate with internal stakeholders regarding incident details.",
+                      "If required, report to regulatory or legal authorities.",
+                      "Provide guidance on preventing future infringement.",
+                      "Maintain open communication channels for follow-up."
+                    ]
+                  },
+                  {
+                    "step": "Implement content monitoring systems.",
+                    "sub_steps": [
+                      "Deploy tools for real-time scanning of content uploads and modifications.",
+                      "Set up automated alerts for potential copyright violations.",
+                      "Integrate content monitoring with digital rights management (DRM) solutions.",
+                      "Regularly update monitoring databases with new copyright information.",
+                      "Conduct periodic audits of content for compliance verification."
+                    ]
+                  },
+                  {
+                    "step": "Educate users on intellectual property rights.",
+                    "sub_steps": [
+                      "Provide training on copyright laws and organizational policies.",
+                      "Share guidelines on proper content use and attribution.",
+                      "Distribute materials explaining legal and ethical implications of infringement.",
+                      "Encourage reporting of suspected violations without fear of reprisal.",
+                      "Update educational content regularly to reflect legal changes."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Illegitimate Use of Third-Party Name",
+                "steps": [
+                  {
+                    "step": "Detect unauthorized use of third-party identities.",
+                    "sub_steps": [
+                      "Monitor domain registrations, websites, and social media for misuse.",
+                      "Leverage brand protection and anti-phishing services.",
+                      "Analyze inbound communications and reports from third parties.",
+                      "Use automated tools to detect impersonation attempts.",
+                      "Log and assess all detected instances for validity."
+                    ]
+                  },
+                  {
+                    "step": "Cease the illegitimate use immediately.",
+                    "sub_steps": [
+                      "Request removal of infringing content or sites through appropriate channels.",
+                      "Engage with hosting providers or platforms to disable misuse.",
+                      "Block fraudulent communications and access points.",
+                      "Coordinate with law enforcement if criminal activity is suspected.",
+                      "Confirm cessation of misuse through follow-up monitoring."
+                    ]
+                  },
+                  {
+                    "step": "Notify the affected third parties.",
+                    "sub_steps": [
+                      "Provide detailed reports of misuse incidents to impacted entities.",
+                      "Offer assistance or recommendations for mitigation.",
+                      "Maintain transparency about response actions taken.",
+                      "Establish communication channels for ongoing cooperation.",
+                      "Update third parties on incident resolution status."
+                    ]
+                  },
+                  {
+                    "step": "Investigate the source and intent of misuse.",
+                    "sub_steps": [
+                      "Collect forensic evidence and analyze attack vectors.",
+                      "Identify responsible individuals or groups where possible.",
+                      "Assess motives, such as fraud, phishing, or brand damage.",
+                      "Determine any internal vulnerabilities exploited.",
+                      "Document investigation findings and recommend corrective actions."
+                    ]
+                  },
+                  {
+                    "step": "Implement controls to prevent future occurrences.",
+                    "sub_steps": [
+                      "Strengthen domain and trademark registrations and monitoring.",
+                      "Deploy anti-impersonation and email authentication protocols (SPF, DKIM, DMARC).",
+                      "Educate employees and partners on recognizing misuse signs.",
+                      "Establish rapid response procedures for detected misuse.",
+                      "Review and update policies related to brand and identity protection."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Phishing",
+                "steps": [
+                  {
+                    "step": "Identify and block phishing attempts.",
+                    "sub_steps": [
+                      "Use email filtering tools to detect suspicious messages.",
+                      "Analyze URLs, attachments, and sender information for malicious indicators.",
+                      "Employ threat intelligence feeds to recognize emerging phishing tactics.",
+                      "Block or quarantine identified phishing emails automatically.",
+                      "Report phishing sources to relevant authorities or platforms."
+                    ]
+                  },
+                  {
+                    "step": "Alert users to ongoing phishing campaigns.",
+                    "sub_steps": [
+                      "Send timely notifications to users about active threats.",
+                      "Provide guidance on recognizing phishing emails and safe behaviors.",
+                      "Publish alerts on internal communication platforms and websites.",
+                      "Encourage reporting of suspected phishing attempts.",
+                      "Monitor user feedback and phishing reports for situational awareness."
+                    ]
+                  },
+                  {
+                    "step": "Analyze phishing emails for indicators of compromise.",
+                    "sub_steps": [
+                      "Extract and examine email headers and metadata.",
+                      "Identify malware payloads or malicious links.",
+                      "Correlate with known threat actor tactics and campaigns.",
+                      "Document IOCs and update detection rules accordingly.",
+                      "Share findings with security teams and threat intelligence partners."
+                    ]
+                  },
+                  {
+                    "step": "Update email filters and security protocols.",
+                    "sub_steps": [
+                      "Tune spam filters to improve detection accuracy.",
+                      "Implement or enhance Domain-based Message Authentication, Reporting, and Conformance (DMARC).",
+                      "Update antivirus and endpoint protection signatures.",
+                      "Configure sandboxing for suspicious attachments and links.",
+                      "Test email security controls regularly to ensure effectiveness."
+                    ]
+                  },
+                  {
+                    "step": "Conduct phishing awareness training for users.",
+                    "sub_steps": [
+                      "Organize regular training sessions including simulations.",
+                      "Teach identification of phishing tactics and social engineering.",
+                      "Promote safe handling of suspicious emails and links.",
+                      "Provide easy channels for reporting phishing attempts.",
+                      "Assess training outcomes and refine content periodically."
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "class": "Fraud",
+            "types": [
+              {
+                "type": "Misuse or Unauthorized Use of Resources",
+                "steps": [
+                  {
+                    "step": "Monitor for unusual resource usage patterns.",
+                    "sub_steps": [
+                      "Set baseline metrics for normal resource consumption (CPU, bandwidth, storage).",
+                      "Use automated monitoring tools to flag deviations from baselines.",
+                      "Analyze usage logs for spikes or irregular access times.",
+                      "Correlate resource usage with user activities and access logs.",
+                      "Trigger alerts on suspicious or unexpected resource consumption."
+                    ]
+                  },
+                  {
+                    "step": "Investigate and confirm unauthorized use.",
+                    "sub_steps": [
+                      "Review flagged incidents for validity and context.",
+                      "Interview users or system owners where applicable.",
+                      "Examine related system logs, access records, and audit trails.",
+                      "Identify if the misuse was intentional or accidental.",
+                      "Document findings and classify the severity of misuse."
+                    ]
+                  },
+                  {
+                    "step": "Terminate unauthorized activities and access.",
+                    "sub_steps": [
+                      "Immediately disable or restrict user accounts involved.",
+                      "Stop running unauthorized processes or services.",
+                      "Isolate affected systems from critical network segments.",
+                      "Reset credentials or keys if compromised.",
+                      "Monitor to confirm cessation of unauthorized activities."
+                    ]
+                  },
+                  {
+                    "step": "Implement usage policies and monitoring tools.",
+                    "sub_steps": [
+                      "Develop or update acceptable use policies covering resources.",
+                      "Deploy tools for continuous usage monitoring and anomaly detection.",
+                      "Automate enforcement actions based on policy violations.",
+                      "Schedule periodic audits to ensure policy adherence.",
+                      "Integrate policy awareness in onboarding and user training."
+                    ]
+                  },
+                  {
+                    "step": "Educate users on acceptable use policies.",
+                    "sub_steps": [
+                      "Conduct regular training sessions on resource usage guidelines.",
+                      "Provide easy-to-access policy documents and FAQs.",
+                      "Use real-life examples of misuse consequences to reinforce awareness.",
+                      "Promote channels for users to report suspicious activities.",
+                      "Evaluate training effectiveness and update content periodically."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Copyright Infringement",
+                "steps": [
+                  {
+                    "step": "Identify unauthorized use of copyrighted materials.",
+                    "sub_steps": [
+                      "Monitor digital assets and content repositories for unlicensed use.",
+                      "Use automated content scanning tools to detect infringement.",
+                      "Leverage copyright databases and fingerprinting technologies.",
+                      "Investigate reports or complaints from rights holders or users.",
+                      "Document all identified instances with evidence."
+                    ]
+                  },
+                  {
+                    "step": "Remove infringing content promptly.",
+                    "sub_steps": [
+                      "Take down unauthorized materials from internal systems and websites.",
+                      "Block access to infringing external sources if applicable.",
+                      "Notify responsible users or departments about the removal.",
+                      "Archive records of removal actions for compliance purposes.",
+                      "Verify removal effectiveness and absence of residual copies."
+                    ]
+                  },
+                  {
+                    "step": "Notify involved parties of the infringement.",
+                    "sub_steps": [
+                      "Inform rights holders about identified infringement and actions taken.",
+                      "Communicate with internal stakeholders regarding incident details.",
+                      "If required, report to regulatory or legal authorities.",
+                      "Provide guidance on preventing future infringement.",
+                      "Maintain open communication channels for follow-up."
+                    ]
+                  },
+                  {
+                    "step": "Implement content monitoring systems.",
+                    "sub_steps": [
+                      "Deploy tools for real-time scanning of content uploads and modifications.",
+                      "Set up automated alerts for potential copyright violations.",
+                      "Integrate content monitoring with digital rights management (DRM) solutions.",
+                      "Regularly update monitoring databases with new copyright information.",
+                      "Conduct periodic audits of content for compliance verification."
+                    ]
+                  },
+                  {
+                    "step": "Educate users on intellectual property rights.",
+                    "sub_steps": [
+                      "Provide training on copyright laws and organizational policies.",
+                      "Share guidelines on proper content use and attribution.",
+                      "Distribute materials explaining legal and ethical implications of infringement.",
+                      "Encourage reporting of suspected violations without fear of reprisal.",
+                      "Update educational content regularly to reflect legal changes."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Illegitimate Use of Third-Party Name",
+                "steps": [
+                  {
+                    "step": "Detect unauthorized use of third-party identities.",
+                    "sub_steps": [
+                      "Monitor domain registrations, websites, and social media for misuse.",
+                      "Leverage brand protection and anti-phishing services.",
+                      "Analyze inbound communications and reports from third parties.",
+                      "Use automated tools to detect impersonation attempts.",
+                      "Log and assess all detected instances for validity."
+                    ]
+                  },
+                  {
+                    "step": "Cease the illegitimate use immediately.",
+                    "sub_steps": [
+                      "Request removal of infringing content or sites through appropriate channels.",
+                      "Engage with hosting providers or platforms to disable misuse.",
+                      "Block fraudulent communications and access points.",
+                      "Coordinate with law enforcement if criminal activity is suspected.",
+                      "Confirm cessation of misuse through follow-up monitoring."
+                    ]
+                  },
+                  {
+                    "step": "Notify the affected third parties.",
+                    "sub_steps": [
+                      "Provide detailed reports of misuse incidents to impacted entities.",
+                      "Offer assistance or recommendations for mitigation.",
+                      "Maintain transparency about response actions taken.",
+                      "Establish communication channels for ongoing cooperation.",
+                      "Update third parties on incident resolution status."
+                    ]
+                  },
+                  {
+                    "step": "Investigate the source and intent of misuse.",
+                    "sub_steps": [
+                      "Collect forensic evidence and analyze attack vectors.",
+                      "Identify responsible individuals or groups where possible.",
+                      "Assess motives, such as fraud, phishing, or brand damage.",
+                      "Determine any internal vulnerabilities exploited.",
+                      "Document investigation findings and recommend corrective actions."
+                    ]
+                  },
+                  {
+                    "step": "Implement controls to prevent future occurrences.",
+                    "sub_steps": [
+                      "Strengthen domain and trademark registrations and monitoring.",
+                      "Deploy anti-impersonation and email authentication protocols (SPF, DKIM, DMARC).",
+                      "Educate employees and partners on recognizing misuse signs.",
+                      "Establish rapid response procedures for detected misuse.",
+                      "Review and update policies related to brand and identity protection."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Phishing",
+                "steps": [
+                  {
+                    "step": "Identify and block phishing attempts.",
+                    "sub_steps": [
+                      "Use email filtering tools to detect suspicious messages.",
+                      "Analyze URLs, attachments, and sender information for malicious indicators.",
+                      "Employ threat intelligence feeds to recognize emerging phishing tactics.",
+                      "Block or quarantine identified phishing emails automatically.",
+                      "Report phishing sources to relevant authorities or platforms."
+                    ]
+                  },
+                  {
+                    "step": "Alert users to ongoing phishing campaigns.",
+                    "sub_steps": [
+                      "Send timely notifications to users about active threats.",
+                      "Provide guidance on recognizing phishing emails and safe behaviors.",
+                      "Publish alerts on internal communication platforms and websites.",
+                      "Encourage reporting of suspected phishing attempts.",
+                      "Monitor user feedback and phishing reports for situational awareness."
+                    ]
+                  },
+                  {
+                    "step": "Analyze phishing emails for indicators of compromise.",
+                    "sub_steps": [
+                      "Extract and examine email headers and metadata.",
+                      "Identify malware payloads or malicious links.",
+                      "Correlate with known threat actor tactics and campaigns.",
+                      "Document IOCs and update detection rules accordingly.",
+                      "Share findings with security teams and threat intelligence partners."
+                    ]
+                  },
+                  {
+                    "step": "Update email filters and security protocols.",
+                    "sub_steps": [
+                      "Tune spam filters to improve detection accuracy.",
+                      "Implement or enhance Domain-based Message Authentication, Reporting, and Conformance (DMARC).",
+                      "Update antivirus and endpoint protection signatures.",
+                      "Configure sandboxing for suspicious attachments and links.",
+                      "Test email security controls regularly to ensure effectiveness."
+                    ]
+                  },
+                  {
+                    "step": "Conduct phishing awareness training for users.",
+                    "sub_steps": [
+                      "Organize regular training sessions including simulations.",
+                      "Teach identification of phishing tactics and social engineering.",
+                      "Promote safe handling of suspicious emails and links.",
+                      "Provide easy channels for reporting phishing attempts.",
+                      "Assess training outcomes and refine content periodically."
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "class": "Fraud",
+            "types": [
+              {
+                "type": "Misuse or Unauthorized Use of Resources",
+                "steps": [
+                  {
+                    "step": "Monitor for unusual resource usage patterns.",
+                    "sub_steps": [
+                      "Set baseline metrics for normal resource consumption (CPU, bandwidth, storage).",
+                      "Use automated monitoring tools to flag deviations from baselines.",
+                      "Analyze usage logs for spikes or irregular access times.",
+                      "Correlate resource usage with user activities and access logs.",
+                      "Trigger alerts on suspicious or unexpected resource consumption."
+                    ]
+                  },
+                  {
+                    "step": "Investigate and confirm unauthorized use.",
+                    "sub_steps": [
+                      "Review flagged incidents for validity and context.",
+                      "Interview users or system owners where applicable.",
+                      "Examine related system logs, access records, and audit trails.",
+                      "Identify if the misuse was intentional or accidental.",
+                      "Document findings and classify the severity of misuse."
+                    ]
+                  },
+                  {
+                    "step": "Terminate unauthorized activities and access.",
+                    "sub_steps": [
+                      "Immediately disable or restrict user accounts involved.",
+                      "Stop running unauthorized processes or services.",
+                      "Isolate affected systems from critical network segments.",
+                      "Reset credentials or keys if compromised.",
+                      "Monitor to confirm cessation of unauthorized activities."
+                    ]
+                  },
+                  {
+                    "step": "Implement usage policies and monitoring tools.",
+                    "sub_steps": [
+                      "Develop or update acceptable use policies covering resources.",
+                      "Deploy tools for continuous usage monitoring and anomaly detection.",
+                      "Automate enforcement actions based on policy violations.",
+                      "Schedule periodic audits to ensure policy adherence.",
+                      "Integrate policy awareness in onboarding and user training."
+                    ]
+                  },
+                  {
+                    "step": "Educate users on acceptable use policies.",
+                    "sub_steps": [
+                      "Conduct regular training sessions on resource usage guidelines.",
+                      "Provide easy-to-access policy documents and FAQs.",
+                      "Use real-life examples of misuse consequences to reinforce awareness.",
+                      "Promote channels for users to report suspicious activities.",
+                      "Evaluate training effectiveness and update content periodically."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Copyright Infringement",
+                "steps": [
+                  {
+                    "step": "Identify unauthorized use of copyrighted materials.",
+                    "sub_steps": [
+                      "Monitor digital assets and content repositories for unlicensed use.",
+                      "Use automated content scanning tools to detect infringement.",
+                      "Leverage copyright databases and fingerprinting technologies.",
+                      "Investigate reports or complaints from rights holders or users.",
+                      "Document all identified instances with evidence."
+                    ]
+                  },
+                  {
+                    "step": "Remove infringing content promptly.",
+                    "sub_steps": [
+                      "Take down unauthorized materials from internal systems and websites.",
+                      "Block access to infringing external sources if applicable.",
+                      "Notify responsible users or departments about the removal.",
+                      "Archive records of removal actions for compliance purposes.",
+                      "Verify removal effectiveness and absence of residual copies."
+                    ]
+                  },
+                  {
+                    "step": "Notify involved parties of the infringement.",
+                    "sub_steps": [
+                      "Inform rights holders about identified infringement and actions taken.",
+                      "Communicate with internal stakeholders regarding incident details.",
+                      "If required, report to regulatory or legal authorities.",
+                      "Provide guidance on preventing future infringement.",
+                      "Maintain open communication channels for follow-up."
+                    ]
+                  },
+                  {
+                    "step": "Implement content monitoring systems.",
+                    "sub_steps": [
+                      "Deploy tools for real-time scanning of content uploads and modifications.",
+                      "Set up automated alerts for potential copyright violations.",
+                      "Integrate content monitoring with digital rights management (DRM) solutions.",
+                      "Regularly update monitoring databases with new copyright information.",
+                      "Conduct periodic audits of content for compliance verification."
+                    ]
+                  },
+                  {
+                    "step": "Educate users on intellectual property rights.",
+                    "sub_steps": [
+                      "Provide training on copyright laws and organizational policies.",
+                      "Share guidelines on proper content use and attribution.",
+                      "Distribute materials explaining legal and ethical implications of infringement.",
+                      "Encourage reporting of suspected violations without fear of reprisal.",
+                      "Update educational content regularly to reflect legal changes."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Illegitimate Use of Third-Party Name",
+                "steps": [
+                  {
+                    "step": "Detect unauthorized use of third-party identities.",
+                    "sub_steps": [
+                      "Monitor domain registrations, websites, and social media for misuse.",
+                      "Leverage brand protection and anti-phishing services.",
+                      "Analyze inbound communications and reports from third parties.",
+                      "Use automated tools to detect impersonation attempts.",
+                      "Log and assess all detected instances for validity."
+                    ]
+                  },
+                  {
+                    "step": "Cease the illegitimate use immediately.",
+                    "sub_steps": [
+                      "Request removal of infringing content or sites through appropriate channels.",
+                      "Engage with hosting providers or platforms to disable misuse.",
+                      "Block fraudulent communications and access points.",
+                      "Coordinate with law enforcement if criminal activity is suspected.",
+                      "Confirm cessation of misuse through follow-up monitoring."
+                    ]
+                  },
+                  {
+                    "step": "Notify the affected third parties.",
+                    "sub_steps": [
+                      "Provide detailed reports of misuse incidents to impacted entities.",
+                      "Offer assistance or recommendations for mitigation.",
+                      "Maintain transparency about response actions taken.",
+                      "Establish communication channels for ongoing cooperation.",
+                      "Update third parties on incident resolution status."
+                    ]
+                  },
+                  {
+                    "step": "Investigate the source and intent of misuse.",
+                    "sub_steps": [
+                      "Collect forensic evidence and analyze attack vectors.",
+                      "Identify responsible individuals or groups where possible.",
+                      "Assess motives, such as fraud, phishing, or brand damage.",
+                      "Determine any internal vulnerabilities exploited.",
+                      "Document investigation findings and recommend corrective actions."
+                    ]
+                  },
+                  {
+                    "step": "Implement controls to prevent future occurrences.",
+                    "sub_steps": [
+                      "Strengthen domain and trademark registrations and monitoring.",
+                      "Deploy anti-impersonation and email authentication protocols (SPF, DKIM, DMARC).",
+                      "Educate employees and partners on recognizing misuse signs.",
+                      "Establish rapid response procedures for detected misuse.",
+                      "Review and update policies related to brand and identity protection."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Phishing",
+                "steps": [
+                  {
+                    "step": "Identify and block phishing attempts.",
+                    "sub_steps": [
+                      "Use email filtering tools to detect suspicious messages.",
+                      "Analyze URLs, attachments, and sender information for malicious indicators.",
+                      "Employ threat intelligence feeds to recognize emerging phishing tactics.",
+                      "Block or quarantine identified phishing emails automatically.",
+                      "Report phishing sources to relevant authorities or platforms."
+                    ]
+                  },
+                  {
+                    "step": "Alert users to ongoing phishing campaigns.",
+                    "sub_steps": [
+                      "Send timely notifications to users about active threats.",
+                      "Provide guidance on recognizing phishing emails and safe behaviors.",
+                      "Publish alerts on internal communication platforms and websites.",
+                      "Encourage reporting of suspected phishing attempts.",
+                      "Monitor user feedback and phishing reports for situational awareness."
+                    ]
+                  },
+                  {
+                    "step": "Analyze phishing emails for indicators of compromise.",
+                    "sub_steps": [
+                      "Extract and examine email headers and metadata.",
+                      "Identify malware payloads or malicious links.",
+                      "Correlate with known threat actor tactics and campaigns.",
+                      "Document IOCs and update detection rules accordingly.",
+                      "Share findings with security teams and threat intelligence partners."
+                    ]
+                  },
+                  {
+                    "step": "Update email filters and security protocols.",
+                    "sub_steps": [
+                      "Tune spam filters to improve detection accuracy.",
+                      "Implement or enhance Domain-based Message Authentication, Reporting, and Conformance (DMARC).",
+                      "Update antivirus and endpoint protection signatures.",
+                      "Configure sandboxing for suspicious attachments and links.",
+                      "Test email security controls regularly to ensure effectiveness."
+                    ]
+                  },
+                  {
+                    "step": "Conduct phishing awareness training for users.",
+                    "sub_steps": [
+                      "Organize regular training sessions including simulations.",
+                      "Teach identification of phishing tactics and social engineering.",
+                      "Promote safe handling of suspicious emails and links.",
+                      "Provide easy channels for reporting phishing attempts.",
+                      "Assess training outcomes and refine content periodically."
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "class": "Abusive Content",
+            "types": [
+              {
+                "type": "SPAM",
+                "steps": [
+                  {
+                    "step": "Detect and filter spam messages.",
+                    "sub_steps": [
+                      "Deploy spam filtering solutions leveraging heuristic, signature, and behavior analysis.",
+                      "Analyze message content, headers, and metadata for spam indicators.",
+                      "Integrate machine learning models to improve spam detection accuracy.",
+                      "Monitor inbound and outbound traffic for bulk or repetitive messaging.",
+                      "Continuously update spam detection rules based on evolving tactics."
+                    ]
+                  },
+                  {
+                    "step": "Block IP addresses and domains sending spam.",
+                    "sub_steps": [
+                      "Maintain and update blacklists of known spam IPs and domains.",
+                      "Implement rate limiting and throttling for suspicious senders.",
+                      "Use DNS-based Blackhole Lists (DNSBL) and real-time blocklists.",
+                      "Coordinate with internet service providers (ISPs) to report abuse sources.",
+                      "Review and remove blocks as appropriate to avoid false positives."
+                    ]
+                  },
+                  {
+                    "step": "Educate users on identifying and reporting spam.",
+                    "sub_steps": [
+                      "Provide clear guidance on recognizing spam characteristics.",
+                      "Encourage users to report spam emails via designated channels.",
+                      "Distribute awareness materials highlighting phishing and scam risks.",
+                      "Offer training sessions focused on email hygiene and safety.",
+                      "Gather user feedback to improve spam handling policies."
+                    ]
+                  },
+                  {
+                    "step": "Implement email authentication protocols.",
+                    "sub_steps": [
+                      "Deploy SPF (Sender Policy Framework) to validate sending servers.",
+                      "Implement DKIM (DomainKeys Identified Mail) for email signature verification.",
+                      "Enforce DMARC (Domain-based Message Authentication, Reporting & Conformance) policies.",
+                      "Monitor authentication reports to detect spoofing attempts.",
+                      "Adjust policies to maximize email deliverability while minimizing spam."
+                    ]
+                  },
+                  {
+                    "step": "Monitor for changes in spam patterns.",
+                    "sub_steps": [
+                      "Track trends in spam techniques and payloads regularly.",
+                      "Analyze global threat intelligence for emerging spam campaigns.",
+                      "Adjust filtering and blocking mechanisms to respond dynamically.",
+                      "Conduct periodic reviews of spam volume and false positive rates.",
+                      "Share insights with industry partners and security communities."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Hate Speech",
+                "steps": [
+                  {
+                    "step": "Identify content containing hate speech.",
+                    "sub_steps": [
+                      "Use automated content scanning tools with natural language processing (NLP) models.",
+                      "Employ keyword lists, phrase matching, and context analysis.",
+                      "Leverage user reports and moderation flags to detect violations.",
+                      "Analyze patterns and escalation of hate speech incidents.",
+                      "Combine automated detection with human review for accuracy."
+                    ]
+                  },
+                  {
+                    "step": "Remove offensive content promptly.",
+                    "sub_steps": [
+                      "Enforce content takedown procedures according to platform policies.",
+                      "Implement timely response workflows to minimize exposure.",
+                      "Notify content creators of removal decisions and appeal processes.",
+                      "Archive removed content for audit and legal compliance.",
+                      "Track repeat offenders for escalating enforcement actions."
+                    ]
+                  },
+                  {
+                    "step": "Enforce community guidelines and policies.",
+                    "sub_steps": [
+                      "Maintain clear and accessible policies addressing hate speech.",
+                      "Apply graduated sanctions ranging from warnings to bans.",
+                      "Empower moderators with tools and authority to act swiftly.",
+                      "Document enforcement actions and outcomes for transparency.",
+                      "Review and update guidelines regularly based on community feedback."
+                    ]
+                  },
+                  {
+                    "step": "Report incidents to appropriate authorities.",
+                    "sub_steps": [
+                      "Identify content that violates laws or poses security risks.",
+                      "Prepare incident reports with relevant evidence and context.",
+                      "Coordinate with law enforcement or regulatory agencies as required.",
+                      "Maintain confidentiality and follow legal protocols during reporting.",
+                      "Follow up on investigations and cooperate as needed."
+                    ]
+                  },
+                  {
+                    "step": "Promote awareness and education on respectful communication.",
+                    "sub_steps": [
+                      "Launch campaigns emphasizing diversity, equity, and inclusion.",
+                      "Provide training resources on recognizing and countering hate speech.",
+                      "Encourage positive community engagement and dialogue.",
+                      "Collaborate with advocacy groups and experts on content moderation.",
+                      "Measure impact and adapt programs to community needs."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Sexual Exploitation of Minors, Racism, and Incitement to Violence",
+                "steps": [
+                  {
+                    "step": "Detect and isolate illegal or harmful content.",
+                    "sub_steps": [
+                      "Deploy advanced detection systems using image recognition and NLP.",
+                      "Leverage known hash databases for child exploitation materials.",
+                      "Use behavioral analysis to flag incitement or racist content.",
+                      "Isolate affected content and users to prevent further dissemination.",
+                      "Prioritize real-time detection and escalation workflows."
+                    ]
+                  },
+                  {
+                    "step": "Report immediately to competent authorities.",
+                    "sub_steps": [
+                      "Follow legal mandates for reporting to law enforcement agencies.",
+                      "Submit required documentation and evidence securely.",
+                      "Coordinate with hotlines and support organizations specialized in these crimes.",
+                      "Ensure timely communication to meet regulatory deadlines.",
+                      "Track reports and responses for compliance and audit."
+                    ]
+                  },
+                  {
+                    "step": "Remove content and block involved users.",
+                    "sub_steps": [
+                      "Execute immediate takedown of harmful or illegal content.",
+                      "Suspend or ban user accounts linked to violations.",
+                      "Prevent creation of new accounts by the same actors.",
+                      "Document removal and enforcement activities thoroughly.",
+                      "Monitor for repeated offenses or evasive behavior."
+                    ]
+                  },
+                  {
+                    "step": "Cooperate with legal investigations.",
+                    "sub_steps": [
+                      "Preserve forensic evidence with chain-of-custody procedures.",
+                      "Respond promptly to lawful information requests.",
+                      "Coordinate with internal legal and compliance teams.",
+                      "Provide expert testimony or technical support if required.",
+                      "Ensure privacy and safety of victims throughout the process."
+                    ]
+                  },
+                  {
+                    "step": "Implement automatic detection systems.",
+                    "sub_steps": [
+                      "Invest in machine learning models trained on relevant datasets.",
+                      "Continuously update detection algorithms to adapt to new tactics.",
+                      "Integrate detection with content management and moderation tools.",
+                      "Test systems regularly to maintain high accuracy and low false positives.",
+                      "Collaborate with industry groups to share detection improvements."
+                    ]
+                  },
+                  {
+                    "step": "Conduct awareness and prevention campaigns.",
+                    "sub_steps": [
+                      "Educate users about identifying and reporting harmful content.",
+                      "Partner with NGOs and governmental bodies for outreach programs.",
+                      "Promote digital safety practices, especially for minors and vulnerable groups.",
+                      "Develop resources for parents, educators, and community leaders.",
+                      "Evaluate campaign effectiveness and adjust messaging as needed."
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "class": "Vulnerability",
+            "types": [
+              {
+                "type": "Weak Encryption",
+                "steps": [
+                  {
+                    "step": "Identify systems using obsolete encryption algorithms.",
+                    "sub_steps": [
+                      "Scan networks and systems for cryptographic algorithm usage.",
+                      "Review system configurations and certificates.",
+                      "Check encryption standards against current industry best practices.",
+                      "Identify legacy applications or hardware with outdated encryption.",
+                      "Document systems requiring updates."
+                    ]
+                  },
+                  {
+                    "step": "Assess risk and potential impact.",
+                    "sub_steps": [
+                      "Evaluate the sensitivity of data protected by weak encryption.",
+                      "Analyze threat models and potential attacker capabilities.",
+                      "Prioritize systems based on criticality and exposure.",
+                      "Estimate potential impact on confidentiality and integrity.",
+                      "Prepare a risk mitigation plan."
+                    ]
+                  },
+                  {
+                    "step": "Update or replace algorithms with modern standards.",
+                    "sub_steps": [
+                      "Select cryptographic algorithms compliant with current standards (e.g., AES, RSA with sufficient key length).",
+                      "Plan migration paths for affected systems.",
+                      "Coordinate updates with system owners and vendors.",
+                      "Replace or upgrade encryption libraries and hardware modules.",
+                      "Ensure backward compatibility where necessary."
+                    ]
+                  },
+                  {
+                    "step": "Test implementation and validate security.",
+                    "sub_steps": [
+                      "Perform functional testing to confirm encryption works correctly.",
+                      "Conduct security testing, including cryptanalysis where possible.",
+                      "Validate key management and secure storage practices.",
+                      "Use third-party audits or penetration tests for verification.",
+                      "Document test results and remediate any issues."
+                    ]
+                  },
+                  {
+                    "step": "Monitor for new cryptographic vulnerabilities.",
+                    "sub_steps": [
+                      "Subscribe to cryptography vulnerability advisories and bulletins.",
+                      "Perform regular reviews of cryptographic standards.",
+                      "Maintain ongoing vulnerability scanning for cryptographic weaknesses.",
+                      "Update algorithms proactively when new threats emerge.",
+                      "Communicate changes and risks to stakeholders."
+                    ]
+                  },
+                  {
+                    "step": "Document changes and communicate stakeholders.",
+                    "sub_steps": [
+                      "Record details of encryption upgrades and affected systems.",
+                      "Update security policies to reflect current encryption standards.",
+                      "Notify relevant teams about changes and required compliance.",
+                      "Maintain audit trails for regulatory requirements.",
+                      "Schedule periodic reviews to ensure sustained compliance."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "DDoS Amplifier",
+                "steps": [
+                  {
+                    "step": "Detect anomalous traffic suggesting amplifier use.",
+                    "sub_steps": [
+                      "Monitor inbound and outbound traffic for volume spikes.",
+                      "Analyze traffic for unusual patterns such as reflection or amplification.",
+                      "Use intrusion detection systems (IDS) and anomaly detection tools.",
+                      "Correlate traffic with known amplifier service signatures (e.g., open DNS resolvers).",
+                      "Generate alerts for suspected amplification attacks."
+                    ]
+                  },
+                  {
+                    "step": "Implement filters to block malicious traffic.",
+                    "sub_steps": [
+                      "Deploy rate limiting and traffic shaping controls.",
+                      "Block or restrict traffic from known malicious IPs and networks.",
+                      "Configure access control lists (ACLs) on routers and firewalls.",
+                      "Filter traffic on protocol/port levels used for amplification (e.g., UDP 53).",
+                      "Test filter effectiveness to avoid impacting legitimate traffic."
+                    ]
+                  },
+                  {
+                    "step": "Update rules on network devices and firewalls.",
+                    "sub_steps": [
+                      "Maintain updated signatures and filtering rules.",
+                      "Apply vendor-recommended configurations to mitigate amplification.",
+                      "Schedule regular audits of firewall and router configurations.",
+                      "Coordinate rule updates with incident response teams.",
+                      "Document changes and monitor for adverse effects."
+                    ]
+                  },
+                  {
+                    "step": "Monitor environment for new attack vectors.",
+                    "sub_steps": [
+                      "Stay informed of emerging DDoS amplification methods.",
+                      "Use threat intelligence feeds specific to DDoS threats.",
+                      "Run periodic network scans to identify open amplifiers.",
+                      "Adjust detection and mitigation strategies accordingly.",
+                      "Engage with upstream providers for collaborative defense."
+                    ]
+                  },
+                  {
+                    "step": "Review and reinforce network security policies.",
+                    "sub_steps": [
+                      "Update policies to include DDoS mitigation best practices.",
+                      "Define roles and responsibilities for DDoS response.",
+                      "Ensure incident response plans incorporate amplification attack scenarios.",
+                      "Conduct training and simulations with network teams.",
+                      "Review policies annually or after incidents."
+                    ]
+                  },
+                  {
+                    "step": "Document incidents and response actions.",
+                    "sub_steps": [
+                      "Log attack details including timing, sources, and mitigation steps.",
+                      "Analyze effectiveness of response and update playbooks.",
+                      "Share lessons learned with relevant stakeholders.",
+                      "Retain records for compliance and audit.",
+                      "Plan improvements based on incident reviews."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Potentially Unwanted Accessible Services",
+                "steps": [
+                  {
+                    "step": "Inventory exposed non-essential services.",
+                    "sub_steps": [
+                      "Perform network scans to detect open ports and services.",
+                      "Review system and application configurations.",
+                      "Identify services not required for operational purposes.",
+                      "Consult with system owners to confirm service necessity.",
+                      "Maintain an updated inventory of accessible services."
+                    ]
+                  },
+                  {
+                    "step": "Assess risks of undue exposure.",
+                    "sub_steps": [
+                      "Evaluate services for known vulnerabilities or weak configurations.",
+                      "Consider exposure to external networks versus internal only.",
+                      "Assess potential impact if service is compromised.",
+                      "Prioritize services for mitigation based on risk level.",
+                      "Document risk assessment results."
+                    ]
+                  },
+                  {
+                    "step": "Disable or restrict access to unnecessary services.",
+                    "sub_steps": [
+                      "Shut down non-essential services safely.",
+                      "Restrict access using firewalls, VPNs, or access control lists.",
+                      "Apply network segmentation to isolate critical systems.",
+                      "Coordinate changes with relevant teams to avoid service disruption.",
+                      "Verify service status post changes."
+                    ]
+                  },
+                  {
+                    "step": "Apply strict access controls and monitoring.",
+                    "sub_steps": [
+                      "Implement strong authentication and authorization for necessary services.",
+                      "Enable logging and audit trails for service access.",
+                      "Use intrusion detection/prevention systems to monitor service usage.",
+                      "Set up alerts for unusual or unauthorized access attempts.",
+                      "Review access controls periodically."
+                    ]
+                  },
+                  {
+                    "step": "Regularly test security of remaining services.",
+                    "sub_steps": [
+                      "Conduct vulnerability scans and penetration tests.",
+                      "Perform configuration reviews and compliance checks.",
+                      "Use automated tools to detect service misconfigurations.",
+                      "Remediate identified issues promptly.",
+                      "Maintain records of tests and corrective actions."
+                    ]
+                  },
+                  {
+                    "step": "Update service management procedures.",
+                    "sub_steps": [
+                      "Define clear policies for service deployment and exposure.",
+                      "Integrate security requirements into service lifecycle.",
+                      "Train administrators on secure service management.",
+                      "Schedule periodic reviews and audits.",
+                      "Continuously improve procedures based on findings."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Information Disclosure",
+                "steps": [
+                  {
+                    "step": "Identify source and extent of exposed information.",
+                    "sub_steps": [
+                      "Analyze logs, systems, and applications for leaks.",
+                      "Determine data types and sensitivity involved.",
+                      "Trace leakage pathways including misconfigurations or insider activity.",
+                      "Estimate volume and recipients of disclosed data.",
+                      "Document findings comprehensively."
+                    ]
+                  },
+                  {
+                    "step": "Isolate and block leakage channels.",
+                    "sub_steps": [
+                      "Disable or restrict access to compromised systems.",
+                      "Fix misconfigurations causing exposure.",
+                      "Apply data loss prevention (DLP) tools and controls.",
+                      "Monitor for further leakage attempts.",
+                      "Coordinate with network and system teams for containment."
+                    ]
+                  },
+                  {
+                    "step": "Assess impact and notify affected parties.",
+                    "sub_steps": [
+                      "Determine regulatory and contractual notification requirements.",
+                      "Prepare communication plans for stakeholders and impacted individuals.",
+                      "Conduct impact analysis including reputational and operational effects.",
+                      "Coordinate with legal and compliance teams.",
+                      "Send notifications within required timeframes."
+                    ]
+                  },
+                  {
+                    "step": "Implement prevention and monitoring controls.",
+                    "sub_steps": [
+                      "Deploy DLP and encryption on sensitive data.",
+                      "Train users on data handling and protection policies.",
+                      "Enhance monitoring for anomalous data access or transfer.",
+                      "Establish periodic data audits.",
+                      "Update security architecture as needed."
+                    ]
+                  },
+                  {
+                    "step": "Conduct security audits and awareness.",
+                    "sub_steps": [
+                      "Schedule regular audits focused on data exposure risks.",
+                      "Review and update security policies accordingly.",
+                      "Conduct awareness campaigns on information protection.",
+                      "Engage third-party assessors if needed.",
+                      "Track audit findings and corrective actions."
+                    ]
+                  },
+                  {
+                    "step": "Document and review data protection procedures.",
+                    "sub_steps": [
+                      "Maintain up-to-date documentation of data protection controls.",
+                      "Review procedures after incidents or audits.",
+                      "Incorporate lessons learned into policy revisions.",
+                      "Communicate changes to all relevant staff.",
+                      "Ensure compliance with legal and regulatory standards."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Vulnerable System",
+                "steps": [
+                  {
+                    "step": "Detect systems with known vulnerabilities.",
+                    "sub_steps": [
+                      "Use vulnerability scanning tools and services regularly.",
+                      "Subscribe to vulnerability databases and advisories.",
+                      "Perform asset discovery to identify all systems in scope.",
+                      "Prioritize vulnerabilities based on CVSS scores and exploitability.",
+                      "Maintain an updated vulnerability register."
+                    ]
+                  },
+                  {
+                    "step": "Apply security patches and updates immediately.",
+                    "sub_steps": [
+                      "Coordinate with system owners for timely patching.",
+                      "Test patches in controlled environments before deployment.",
+                      "Automate patch deployment where possible.",
+                      "Verify patch installation and remediation status.",
+                      "Document patch management activities."
+                    ]
+                  },
+                  {
+                    "step": "Conduct penetration tests and continuous assessments.",
+                    "sub_steps": [
+                      "Schedule periodic penetration testing focused on high-risk systems.",
+                      "Use automated tools for continuous vulnerability assessments.",
+                      "Simulate attack scenarios to test defenses.",
+                      "Analyze findings and remediate vulnerabilities promptly.",
+                      "Report results to management and technical teams."
+                    ]
+                  },
+                  {
+                    "step": "Isolate compromised systems until fully mitigated.",
+                    "sub_steps": [
+                      "Quarantine affected systems from network and critical assets.",
+                      "Conduct forensic analysis to determine compromise scope.",
+                      "Apply necessary patches, configuration changes, or rebuild systems.",
+                      "Reintegrate systems only after successful remediation and testing.",
+                      "Document incident and recovery actions."
+                    ]
+                  },
+                  {
+                    "step": "Monitor environment for exploitation signs.",
+                    "sub_steps": [
+                      "Deploy intrusion detection/prevention systems (IDS/IPS).",
+                      "Analyze logs for suspicious activity.",
+                      "Use threat intelligence to detect emerging exploit attempts.",
+                      "Set alerts for known exploit signatures.",
+                      "Review monitoring effectiveness regularly."
+                    ]
+                  },
+                  {
+                    "step": "Keep documentation updated and train teams.",
+                    "sub_steps": [
+                      "Maintain comprehensive vulnerability management documentation.",
+                      "Update playbooks and procedures based on new threats.",
+                      "Conduct regular training for IT and security personnel.",
+                      "Foster a culture of security awareness and proactive patching.",
+                      "Audit team performance and provide feedback."
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "class": "Other",
+            "types": [
+              {
+                "type": "No Type",
+                "steps": [
+                  {
+                    "step": "Collect maximum information about the incident.",
+                    "sub_steps": [
+                      "Gather logs, alerts, and system snapshots.",
+                      "Interview users or staff involved or affected.",
+                      "Compile network traffic and endpoint data.",
+                      "Identify timeline and scope of the incident.",
+                      "Preserve evidence to maintain integrity."
+                    ]
+                  },
+                  {
+                    "step": "Start preliminary analysis for correct classification.",
+                    "sub_steps": [
+                      "Review collected data for patterns or anomalies.",
+                      "Cross-reference with known incident types or signatures.",
+                      "Utilize automated analysis tools where available.",
+                      "Document findings and hypotheses.",
+                      "Prepare for escalation or expert consultation if needed."
+                    ]
+                  },
+                  {
+                    "step": "Isolate affected systems or users as necessary.",
+                    "sub_steps": [
+                      "Determine which systems/users show signs of compromise.",
+                      "Disconnect or limit network access for affected assets.",
+                      "Apply account restrictions or disable compromised credentials.",
+                      "Communicate isolation actions to relevant teams.",
+                      "Monitor for impact of isolation on operations."
+                    ]
+                  },
+                  {
+                    "step": "Consult experts for response guidance.",
+                    "sub_steps": [
+                      "Engage internal incident response or security teams.",
+                      "Contact external specialists or vendors if required.",
+                      "Share collected data and preliminary analysis.",
+                      "Discuss potential classifications and response options.",
+                      "Document expert recommendations."
+                    ]
+                  },
+                  {
+                    "step": "Implement temporary actions for mitigation.",
+                    "sub_steps": [
+                      "Apply quick fixes to block known attack vectors.",
+                      "Increase monitoring and logging around affected systems.",
+                      "Notify affected users and stakeholders.",
+                      "Enforce heightened security policies temporarily.",
+                      "Plan for more comprehensive remediation steps."
+                    ]
+                  },
+                  {
+                    "step": "Update documentation and review classifications.",
+                    "sub_steps": [
+                      "Log incident details, actions taken, and observations.",
+                      "Reassess classification as new information arises.",
+                      "Ensure all updates are clear and accessible.",
+                      "Review incident handling procedures for improvements.",
+                      "Archive documentation for audit and compliance."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Undetermined",
+                "steps": [
+                  {
+                    "step": "Record all symptoms and available evidence.",
+                    "sub_steps": [
+                      "Note unusual behaviors and system alerts.",
+                      "Collect forensic artifacts and memory dumps.",
+                      "Log timestamps, IP addresses, and event details.",
+                      "Preserve evidence integrity with proper chain of custody.",
+                      "Create initial incident summary."
+                    ]
+                  },
+                  {
+                    "step": "Investigate using multiple tools and sources.",
+                    "sub_steps": [
+                      "Use endpoint detection and response (EDR) solutions.",
+                      "Run malware scans and integrity checks.",
+                      "Analyze network traffic for suspicious activity.",
+                      "Consult logs from different systems and applications.",
+                      "Correlate data across multiple information sources."
+                    ]
+                  },
+                  {
+                    "step": "Consult multidisciplinary teams for diagnosis.",
+                    "sub_steps": [
+                      "Involve IT, security analysts, legal, and management.",
+                      "Discuss possible incident scenarios and causes.",
+                      "Review findings collaboratively.",
+                      "Decide on containment, eradication, and recovery strategies.",
+                      "Agree on communication plans."
+                    ]
+                  },
+                  {
+                    "step": "Implement provisional containment controls.",
+                    "sub_steps": [
+                      "Isolate suspected systems or accounts.",
+                      "Block suspicious network traffic or access.",
+                      "Apply temporary firewall or IDS/IPS rules.",
+                      "Increase monitoring and alerting sensitivity.",
+                      "Prepare rollback or restoration plans."
+                    ]
+                  },
+                  {
+                    "step": "Monitor closely for incident evolution.",
+                    "sub_steps": [
+                      "Track changes in system behavior and alerts.",
+                      "Review new evidence and symptoms regularly.",
+                      "Adjust containment and mitigation tactics as needed.",
+                      "Communicate updates to response team and stakeholders.",
+                      "Prepare for incident closure or escalation."
+                    ]
+                  },
+                  {
+                    "step": "Document processes and prepare final report.",
+                    "sub_steps": [
+                      "Compile timeline, actions, and analysis.",
+                      "Summarize findings and unresolved questions.",
+                      "Include recommendations for future prevention.",
+                      "Distribute report to relevant parties.",
+                      "Archive documentation for compliance and lessons learned."
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Incident Dashboard</title>
+
+  <!-- CSS personalizado -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+  <!-- Bootstrap CSS + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+<nav class="navigation-bar bg-dark"></nav>
+{% if 'user' in session %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light px-3 navbar-custom">
+  <a class="navbar-brand" href="{{ url_for('dashboard') }}">Incident Response Manager</a>
+  <div class="ms-auto dropdown">
+    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+      {{ session['user'] }}
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+      <li>
+        <a class="dropdown-item" href="{{ url_for('logout') }}">
+          <i class="bi bi-box-arrow-right me-2"></i> Logout
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+{% endif %}
+
+<div class="dashboard-container">
+  <h1 class="text-light">D A S H B O A R D</h1>
+  {% block content %}
+      <div class="button-container">
+  <a href="/new_incident" class="button">New Incident</a>
+</div>
+
+  <div class="container mt-5">
+
+    <!-- Tab headers -->
+    <ul class="nav nav-tabs" id="incidentTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="in-progress-tab" data-bs-toggle="tab" data-bs-target="#in-progress" type="button" role="tab">In Progress</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" role="tab">Completed</button>
+      </li>
+    </ul>
+
+    <!-- Tab contents -->
+    <div class="tab-content pt-3">
+      <!-- In Progress -->
+      <div class="tab-pane fade show active" id="in-progress" role="tabpanel">
+        {% if in_progress %}
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead class="table-dark">
+              <tr>
+                <th>ID</th>
+                <th>Class</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Start Time</th>
+                <th>% Complete</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in in_progress %}
+              <tr>
+                <td>{{ i.incident_id }}</td>
+                <td>{{ i.incident_class }}</td>
+                <td>{{ i.incident_type }}</td>
+                <td>{{ i.status }}</td>
+                <td>{{ i.start_datetime.strftime('%d/%m/%Y %H:%M') }}</td>
+                <td>{{ i.percent_complete or 0 }}%</td>
+                <td>
+                  <a href="{{ url_for('incident_step', incident_id=i.incident_id, step_id=1) }}" class="btn btn-sm btn-primary">Continue</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+          No incidents in progress. To begin filling an incident record, click on <strong>“+ New Incident”</strong>.
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Completed -->
+      <div class="tab-pane fade" id="completed" role="tabpanel">
+        {% if completed %}
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead class="table-dark">
+              <tr>
+                <th>ID</th>
+                <th>Class</th>
+                <th>Type</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in completed %}
+              <tr>
+                <td>{{ i.incident.incident_id }}</td>
+                <td>{{ i.incident.incident_class }}</td>
+                <td>{{ i.incident.incident_type }}</td>
+                <td>{{ i.incident.start_datetime.strftime('%d/%m/%Y %H:%M') }}</td>
+                <td>{{ i.end_datetime.strftime('%d/%m/%Y %H:%M') }}</td>
+                <td>
+                  <a href="{{ url_for('generate_report', incident_id=i.incident.incident_id) }}" class="btn btn-sm btn-success">Download</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+          No completed incidents yet. To begin filling an incident record, click on <strong>“+ New Incident”</strong>.
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endblock %}
+</div>
+</body>
+</html>

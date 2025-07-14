@@ -1,0 +1,89 @@
+<!-- templates/new_incident.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>New Incident</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/new_incident.css') }}">
+</head>
+<body>
+{% if 'user' in session %}
+<nav class="modern-navbar d-flex align-items-center justify-content-between px-4">
+  <a class="nav-link left-link" href="{{ url_for('dashboard') }}">Dashboard</a>
+
+  <div class="navbar-title text-center flex-grow-1">
+    Incident Response Manager
+  </div>
+
+  <div class="dropdown">
+    <button class="btn user-button dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+      {{ session['user'] }}
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+      <li>
+        <a class="dropdown-item" href="{{ url_for('logout') }}">
+          <i class="bi bi-box-arrow-right me-2"></i> Logout
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+{% endif %}
+
+  <div class="dashboard-container">
+    <h1>New Incident</h1>
+    <form method="post" action="{{ url_for('new_incident') }}">
+  <div class="form-group">
+    <label for="incident_class">Select Incident Class:</label>
+    <select id="incident_class" name="incident_class" onchange="updateIncidentTypes()" required>
+  <option value="" disabled selected>Select a class</option>
+  {% for class_name in incident_class.keys() %}
+    <option value="{{ class_name }}">{{ class_name }}</option>
+  {% endfor %}
+</select>
+
+  </div>
+
+  <div class="form-group">
+    <label for="incident_type">Select Incident Type:</label>
+    <select id="incident_type" name="incident_type" required>
+  <option value="" disabled selected>Select a type</option>
+</select>
+
+  </div>
+
+  <button type="submit" class="button">Start Incident</button>
+</form>
+
+  </div>
+</body>
+</html>
+<script>
+  const incidentClasses = {{ incident_class | tojson }};
+
+  function updateIncidentTypes() {
+  const selectedClass = document.getElementById('incident_class').value;
+  const typesDropdown = document.getElementById('incident_type');
+
+  typesDropdown.innerHTML = '';
+
+  // Adiciona a opção "Select a type"
+  const defaultOption = document.createElement('option');
+  defaultOption.value = '';
+  defaultOption.text = 'Select a type';
+  defaultOption.disabled = true;
+  defaultOption.selected = true;
+  typesDropdown.appendChild(defaultOption);
+
+  if (incidentClasses[selectedClass]) {
+    incidentClasses[selectedClass].forEach(type => {
+      const option = document.createElement('option');
+      option.value = type;
+      option.text = type;
+      typesDropdown.appendChild(option);
+    });
+  }
+}
+window.onload = () => {};
+</script>
