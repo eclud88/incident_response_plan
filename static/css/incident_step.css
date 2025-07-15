@@ -14,12 +14,14 @@ body {
   padding: 0;
 }
 
+/* Navbar */
 .navbar {
   background-color: var(--gray);
   padding: 15px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .navbar-brand {
@@ -29,6 +31,7 @@ body {
   text-decoration: none;
 }
 
+/* Container */
 .dashboard-container {
   max-width: 800px;
   margin: 40px auto;
@@ -36,35 +39,39 @@ body {
   border: 4px solid var(--highlight);
   border-radius: 20px;
   padding: 30px;
+  box-shadow: 0 0 10px #000;
 }
 
+/* Headings */
 h1 {
   text-align: center;
   font-size: 24px;
   color: white;
+  margin-bottom: 30px;
 }
 
 /* Step Tabs */
 .step-tabs {
-  display: inline-flex;
-  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 10px;
-  margin: auto;
+  margin-bottom: 30px;
 }
 
 .step-tab {
-  width: 65px;
-  height: 65px;
+  width: 55px;
+  height: 55px;
   border-radius: 50%;
   background-color: #444;
   color: white;
-  display: inline-flex;
+  display: flex;
   justify-content: center;
   align-items: center;
   font-weight: bold;
   cursor: default;
   transition: background 0.3s;
+  border: 2px solid transparent;
 }
 
 .step-tab.current {
@@ -74,16 +81,18 @@ h1 {
 
 .step-tab.completed {
   background-color: var(--green);
-  border: var(--green);
+  border: 3px solid var(--green);
 }
 
-/* Form Elements */
+/* Forms */
 .form-group {
   margin-bottom: 20px;
 }
 
 label {
   font-weight: bold;
+  display: block;
+  margin-bottom: 8px;
 }
 
 textarea,
@@ -95,13 +104,24 @@ input[type="file"] {
   border-radius: 10px;
   color: white;
   font-size: 14px;
+  box-sizing: border-box;
 }
 
-/* Substeps - Checkbox */
-.checkbox-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+textarea:focus,
+input[type="file"]:focus {
+  outline: none;
+  border-color: var(--green);
+  background-color: #333;
+}
+
+/* Substeps */
+.substep-list {
+  padding-left: 1em;
+  margin-bottom: 20px;
+}
+
+.substep-list li {
+  margin-bottom: 10px;
 }
 
 .checkbox-container {
@@ -113,17 +133,21 @@ input[type="file"] {
   border: 2px solid var(--highlight);
   color: white;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, border-color 0.3s;
 }
 
 .checkbox-container input[type="checkbox"] {
   margin-right: 10px;
-  color: var(--green);
 }
 
 .checkbox-container.checked {
   background-color: var(--green);
   border-color: var(--green);
+}
+
+.substep-text {
+  margin-left: 8px;
+  color: #eee;
 }
 
 /* Feedback */
@@ -166,8 +190,18 @@ input[type="file"] {
   border: none;
   border-radius: 30px;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: background 0.3s, transform 0.2s;
   color: white;
+}
+
+.btn:hover {
+  transform: scale(1.03);
+}
+
+.btn:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .btn-back {
@@ -202,4 +236,43 @@ input[type="file"] {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .dashboard-container {
+    margin: 20px;
+    padding: 20px;
+  }
+
+  .step-tab {
+    width: 45px;
+    height: 45px;
+    font-size: 14px;
+  }
+
+  .btn {
+    font-size: 14px;
+    padding: 10px 16px;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+}
+
+/* Substeps: título mais à direita */
+.substeps h3 {
+  margin-left: 25px;
+}
+
+/* Substep list com numeração visível */
+.substep-list {
+  padding-left: 40px;
+  list-style-position: inside; /* garante que a numeração apareça visível */
+}
+
+/* Labels de descrição e upload mais à direita */
+.form-group label {
+  margin-left: 20px;
 }

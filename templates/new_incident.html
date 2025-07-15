@@ -17,8 +17,9 @@
 
   <div class="dropdown">
     <button class="btn user-button dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
-      {{ session['user'] }}
-    </button>
+  <i class="bi bi-person-circle me-1"></i> {{ session['user'] }}
+</button>
+
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
       <li>
         <a class="dropdown-item" href="{{ url_for('logout') }}">
@@ -28,7 +29,6 @@
     </ul>
   </div>
 </nav>
-
 {% endif %}
 
   <div class="dashboard-container">

@@ -68,9 +68,6 @@ def register():
     return render_template('register.html')
 
 
-
-
-
 @app.route('/', methods=['GET', 'POST'])
 def index():
     return render_template('register.html')
@@ -173,6 +170,7 @@ with app.app_context():
     db.create_all()
 
 
+
 @app.route('/dashboard')
 def dashboard():
     in_progress = Incident.query.filter(Incident.status != 'completed').all()
@@ -244,10 +242,8 @@ def get_steps_for_class_and_type(incident_class, incident_type):
 
 @app.route('/incident/<int:incident_id>/step/<int:step_id>', methods=['GET', 'POST'])
 def incident_step(incident_id, step_id):
+
     incident = Incident.query.filter_by(incident_id=str(incident_id)).first()
-    if not incident:
-        flash('Incidente não encontrado.')
-        return redirect(url_for('dashboard'))
 
     steps_db = IncidentStep.query.filter_by(incident_id=str(incident_id)).order_by(IncidentStep.id).all()
     total_steps = len(steps_db)
@@ -257,13 +253,20 @@ def incident_step(incident_id, step_id):
         return redirect(url_for('dashboard'))
 
     step = steps_db[step_id - 1]
-    step_title = step.step_description
-    substeps = SubStep.query.filter_by(step_id=step.id).all()
-    substeps_list = [s.sub_step_description for s in substeps]
+    substeps_db = SubStep.query.filter_by(step_id=step.id).all()
+    substeps_list = [s.sub_step_description for s in substeps_db]
 
     evidence = Evidence.query.filter_by(incident_id=str(incident_id), step_id=step.id).first()
     evidence_text = evidence.description if evidence else ''
     evidence_attachment = evidence.attachment_name if evidence and evidence.attachment_name else ''
+
+    # Recupera substeps marcados salvos
+    completed_substeps = []
+    if evidence and evidence.upload_status and evidence.upload_status.startswith("json:"):
+        try:
+            completed_substeps = json.loads(evidence.upload_status[5:])
+        except:
+            completed_substeps = []
 
     completed_steps = Evidence.query.filter(
         Evidence.incident_id == str(incident_id),
@@ -272,16 +275,9 @@ def incident_step(incident_id, step_id):
 
     if request.method == 'POST':
         action = request.form.get('action')
-
-        # Sempre permitir sair para o dashboard
-        if action == 'dashboard':
-            return redirect(url_for('dashboard'))
-
-        # Sempre permitir voltar à seleção da classe/tipo
-        if action == 'back':
-            return redirect(url_for('new_incident'))
-
-        evidence_text = request.form.get('evidence')
+        evidence_text = request.form.get('evidence', '').strip()
+        checked_substeps = request.form.getlist('substeps')
+        file = request.files.get('file')
 
         if not evidence:
             evidence = Evidence(
@@ -291,7 +287,6 @@ def incident_step(incident_id, step_id):
 
         evidence.description = evidence_text
 
-        file = request.files.get('file')
         if file and file.filename:
             filename = secure_filename(file.filename)
             upload_dir = os.path.join(app.config['UPLOAD_FOLDER'], str(incident_id), str(step_id))
@@ -299,41 +294,52 @@ def incident_step(incident_id, step_id):
             filepath = os.path.join(upload_dir, filename)
             file.save(filepath)
             evidence.attachment_name = filename
-            evidence.upload_status = 'uploaded'
+
+        # Salva os substeps marcados como JSON dentro de upload_status (sem interferir no campo description)
+        evidence.upload_status = "json:" + json.dumps(checked_substeps)
 
         db.session.add(evidence)
         db.session.commit()
 
-        # Atualizar progresso do incidente
+        # Recalcula progresso
+        has_attachment = bool(evidence.attachment_name)
+        is_step_complete = bool(evidence_text and has_attachment and checked_substeps)
+
         completed_steps = Evidence.query.filter(
             Evidence.incident_id == str(incident_id),
             Evidence.attachment_name.isnot(None)
         ).count()
-
-        incident.percent_complete = int((completed_steps / total_steps) * 50)  # 50% máx. na etapa técnica
+        incident.percent_complete = int((completed_steps / total_steps) * 50)
         db.session.commit()
 
-        if action == 'save':
-            flash('Passo salvo com sucesso.', 'success')
-            return redirect(url_for('incident_step', incident_id=incident_id, step_id=step_id))
+        if action == 'back':
+            return redirect(url_for('incident_step', incident_id=incident_id, step_id=int(step_id) - 1))
+
+        elif action == 'save':
+            if is_step_complete:
+                flash('Passo salvo com sucesso.', 'success')
+            else:
+                flash('Passo parcialmente salvo. Complete todos os campos para avançar.', 'warning')
 
         elif action == 'next':
-            # Garante que apenas avança se o attachment estiver salvo
-            if evidence and evidence.attachment_name:
-                return redirect(url_for('incident_step', incident_id=incident_id, step_id=step_id + 1))
+            if is_step_complete:
+                return redirect(url_for('incident_step', incident_id=incident_id, step_id=int(step_id) + 1))
             else:
-                flash('Você precisa salvar e anexar a evidência antes de prosseguir.')
-                return redirect(url_for('incident_step', incident_id=incident_id, step_id=step_id))
+                flash('Você precisa salvar e anexar a evidência e marcar pelo menos um substep antes de prosseguir.', 'danger')
 
         elif action == 'lessons_learned':
             return redirect(url_for('lessons_learned', incident_id=incident_id))
+
+        elif action == 'dashboard':
+            return redirect(url_for('dashboard', incident_id=incident_id))
 
     return render_template(
         'incident_step.html',
         incident=incident,
         step_id=step_id,
-        step_title=step_title,
+        step_title=step.step_description,
         substeps=substeps_list,
+        completed_substeps=completed_substeps,
         is_first_step=(step_id == 1),
         is_last_step=(step_id == total_steps),
         evidence_text=evidence_text,
@@ -388,21 +394,21 @@ def lessons_learned(incident_id):
         saved = False
 
         # Atualizar conteúdo de Lessons Learned
-        if improvements:
-            lessons.improvements = improvements
-            if incident.percent_complete < 75:
-                incident.percent_complete += 25
+        incident.percent_complete = 50  # steps
+        if lessons.improvements:
+            incident.percent_complete += 25
+            saved = True
+        if lessons.observations:
+            incident.percent_complete += 25
             saved = True
 
-        if observations:
-            lessons.observations = observations
-            if incident.percent_complete < 100:
-                incident.percent_complete += 25
-            saved = True
+        if improvements and observations:
+            incident.status = 'completed'
+            lessons.end_datetime = datetime.now()
 
         if incident.percent_complete == 100:
             incident.status = 'completed'
-            lessons.end_datetime = datetime.now()  # CORRIGIDO
+            lessons.end_datetime = datetime.now()
             db.session.commit()
 
         if saved:
@@ -524,6 +530,23 @@ def generate_report(incident_id):
 
     filename = f"incident_report_{incident_id}.pdf"
     return send_file(final_pdf_path, as_attachment=True, download_name=filename)
+
+
+@app.route('/delete_incident/<incident_id>', methods=['DELETE'])
+def delete_incident(incident_id):
+    try:
+        IncidentStep.query.filter_by(incident_id=incident_id).delete()
+        Evidence.query.filter_by(incident_id=incident_id).delete()
+        SubStep.query.filter_by(incident_id=incident_id).delete()
+        LessonsLearned.query.filter_by(incident_id=incident_id).delete()
+        Incident.query.filter_by(incident_id=incident_id).delete()
+
+        db.session.commit()
+        return jsonify({'status': 'success'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
 
 
 @app.route('/logout')
