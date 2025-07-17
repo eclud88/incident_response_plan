@@ -5,24 +5,33 @@
   <title>Incident Step {{ step_id }}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/incident_step.css') }}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Bootstrap CSS + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
 {% if 'user' in session %}
-<nav class="navbar navbar-expand-lg custom-navbar">
-  <a class="navbar-brand" href="{{ url_for('dashboard') }}">Incident Response Manager</a>
-  <div class="ms-auto dropdown">
-    <button class="btn btn-outline-primary dropdown-toggle user-button" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
-      {{ session['user'] }}
+<nav class="modern-navbar d-flex align-items-center justify-content-between px-4">
+  <a class="nav-link left-link" href="{{ url_for('dashboard') }}">Dashboard</a>
+  <div class="navbar-title text-center flex-grow-1">Incident Response Manager</div>
+  <div class="dropdown">
+    <button class="btn user-button dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="bi bi-person-circle me-1"></i> {{ session['user'] }}
     </button>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-      <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+      <li>
+        <a class="dropdown-item" href="{{ url_for('logout') }}">
+          <i class="bi bi-box-arrow-right me-2"></i> Logout
+        </a>
+      </li>
     </ul>
   </div>
 </nav>
 {% endif %}
 
 <div class="dashboard-container">
-
   <div class="step-tabs">
     {% for i in range(1, total_steps + 1) %}
       <div class="step-tab {% if i == step_id %}current{% elif i <= completed_steps %}completed{% endif %}">
@@ -35,39 +44,38 @@
 
   <form method="POST" enctype="multipart/form-data">
     {% if substeps %}
-<div class="substeps">
-  <h3 style="margin-left: 25px;">Substeps:</h3>
-  <ol class="substep-list" style="padding-left: 40px; list-style-position: inside;">
-    {% for substep in substeps %}
-    <li>
-      <label class="checkbox-container">
-        <input type="checkbox" name="substeps" value="{{ substep }}"
-        {% if substep in completed_substeps %}checked{% endif %}
-        onchange="toggleCheckboxStyle(this)">
-        <span class="checkmark"></span>
-        <span class="substep-text">{{ substep }}</span>
-      </label>
-    </li>
-    {% endfor %}
-  </ol>
-</div>
-{% endif %}
-
-<div class="form-group">
-  <label for="evidence" style="margin-left: 20px;">Evidence Description:</label>
-  <textarea id="evidence" name="evidence" rows="5" required></textarea>
-</div>
-
-<div class="form-group">
-  <label for="file" style="margin-left: 20px;">Attach Evidence File:</label>
-  <input type="file" id="file" name="file" onchange="showUploadFeedback(event)">
-  <div id="upload-feedback" class="upload-feedback">
-    {% if evidence_attachment %}
-    <span class="success"><i class="fa-solid fa-check"></i> File saved: {{ evidence_attachment }}</span>
+    <div class="substeps">
+      <h3 style="margin-left: 15px;">Substeps:</h3>
+      <ol class="substep-list" style="padding-left: 40px; list-style-position: inside;">
+        {% for substep in substeps %}
+        <li>
+          <label class="checkbox-container">
+            <input type="checkbox" name="substeps" value="{{ substep }}"
+              {% if substep in completed_substeps %}checked{% endif %}
+              onchange="toggleCheckboxStyle(this)">
+            <span class="checkmark"></span>
+            <span class="substep-text">{{ substep }}</span>
+          </label>
+        </li>
+        {% endfor %}
+      </ol>
+    </div>
     {% endif %}
-  </div>
-</div>
 
+    <div class="form-group">
+      <label for="evidence" style="margin-left: 20px;">Evidence Description:</label>
+      <textarea id="evidence" onchange="toggleEvidenceStyle(this)" class="evidence" name="evidence" rows="5" required>{{ evidence_description or '' }}</textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="file" style="margin-left: 20px;">Attach Evidence File:</label>
+      <input type="file" class="file" id="file" name="file" onchange="showUploadFeedback(event)">
+      <div id="upload-feedback" class="upload-feedback" data-saved="{{ 'true' if evidence_attachment else 'false' }}">
+        {% if evidence_attachment %}
+        <span class="success"><i class="fa-solid fa-check"></i> File saved: {{ evidence_attachment }}</span>
+        {% endif %}
+      </div>
+    </div>
 
     <div class="button-bar">
       <div class="left-buttons">
@@ -83,10 +91,6 @@
       </div>
 
       <div class="right-buttons">
-        <button type="submit" name="action" value="save" class="btn btn-save">
-          <i class="fa-solid fa-floppy-disk"></i> Save
-        </button>
-
         {% if not is_last_step %}
         <button type="submit" name="action" value="next" class="btn btn-next" disabled>
           Next <i class="fa-solid fa-arrow-right"></i>
@@ -108,7 +112,7 @@
 </div>
 
 <script>
-const allowedExtensions = ['pdf', 'png', 'jpg', 'jpeg'];
+const allowedExtensions = ['png', 'jpg', 'jpeg'];
 
 function showUploadFeedback(event) {
   const file = event.target.files[0];
@@ -165,8 +169,36 @@ window.addEventListener('DOMContentLoaded', function () {
 
   validateNextButton();
 });
-</script>
 
+function toggleEvidenceStyle(evidence) {
+  const hasValue = evidence.value.trim() !== '';
+
+  if (hasValue) {
+    evidence.parentElement.classList.add("evidenceDescr");
+  } else {
+    evidence.parentElement.classList.remove("evidenceDescr");
+  }
+
+  validateNextButton();
+}
+
+  function toggleDropdown() {
+    const dropdown = document.getElementById("userDropdown");
+    dropdown.classList.toggle("show");
+  }
+
+  // Fechar dropdown ao clicar fora
+  window.onclick = function(event) {
+    if (!event.target.matches('.user-button')) {
+      let dropdowns = document.getElementsByClassName("dropdown-menu");
+      for (let i = 0; i < dropdowns.length; i++) {
+        dropdowns[i].classList.remove('show');
+      }
+    }
+  }
+
+
+</script>
 </body>
 </html>
 

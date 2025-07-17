@@ -1,34 +1,121 @@
 :root {
+  --primary-color: #4c5ca4;
+  --background-color: #121212;
+  --accent-color: #84acdb;
+  --hover-color: #809fd8;
+  --text-color: #f1f1f1;
   --highlight: #3a8bff;
   --green: #28a745;
-  --text-color: #ffffff;
-  --background: #121212;
   --gray: #2a2a2a;
 }
 
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background-color: var(--background);
-  color: var(--text-color);
+body, html {
   margin: 0;
   padding: 0;
+  height: 100%;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--background-color) !important;
+  color: var(--text-color) !important;
 }
 
-/* Navbar */
-.navbar {
-  background-color: var(--gray);
-  padding: 15px 20px;
+
+/* NAVBAR MODERNA */
+.modern-navbar {
+  padding: 15px 30px;
+  border-radius: 16px;
+  margin: 20px;
+  border: 3px solid var(--highlight);
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  color: var(--highlight);
+  background-color: var(--background-color) !important;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
-.navbar-brand {
-  color: var(--highlight);
-  font-size: 20px;
+.navbar-title {
   font-weight: bold;
+  font-size: 20px;
+  color: var(--highlight);
+  text-align: center;
+  flex-grow: 1;
+}
+
+.nav-link,
+.left-link {
+  color: var(--highlight);
   text-decoration: none;
+  font-weight: bold;
+  margin-right: 20px;
+}
+
+.nav-link:hover,
+.left-link:hover {
+  text-decoration: underline;
+}
+
+.user-button {
+  border: 2px solid var(--highlight) !important;
+  color: var(--highlight) !important;
+  border-radius: 30px;
+  padding: 6px 16px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  background-color: transparent;
+  backdrop-filter: blur(4px);
+  cursor: pointer;
+}
+
+.user-button:hover,
+.user-button:focus {
+  background-color: var(--highlight);
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 0 10px var(--highlight);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 60px;
+  right: 30px;
+  border: 1px solid var(--highlight);
+  background-color: var(--background-color);
+  border-radius: 12px;
+  padding: 10px 0;
+  min-width: 160px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+  display: none;
+  animation: fadeInDown 0.3s ease;
+}
+
+
+.dropdown-item {
+  padding: 10px 20px;
+  color: var(--highlight);
+  text-decoration: none;
+  display: block;
+  font-weight: bold;
+}
+
+.dropdown-item:hover {
+  color: var(--accent-color) !important;
+  background-color: #1c1c1c;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-menu.show {
+  display: block;
 }
 
 /* Container */
@@ -45,8 +132,8 @@ body {
 /* Headings */
 h1 {
   text-align: center;
-  font-size: 24px;
-  color: white;
+  font-size: 25px;
+  color: white !important;
   margin-bottom: 30px;
 }
 
@@ -60,8 +147,8 @@ h1 {
 }
 
 .step-tab {
-  width: 55px;
-  height: 55px;
+  width: 65px;
+  height: 65px;
   border-radius: 50%;
   background-color: #444;
   color: white;
@@ -75,18 +162,21 @@ h1 {
 }
 
 .step-tab.current {
-  border: 3px solid var(--highlight);
+  border: 3px solid white;
   background-color: var(--highlight);
+  width: 80px;
+  height: 80px;
 }
 
 .step-tab.completed {
   background-color: var(--green);
-  border: 3px solid var(--green);
+  border: 3px solid darkgreen;
 }
 
 /* Forms */
 .form-group {
-  margin-bottom: 20px;
+  margin-top: 20px;
+  margin-bottom: 25px;
 }
 
 label {
@@ -101,23 +191,26 @@ input[type="file"] {
   padding: 12px;
   background-color: var(--gray);
   border: 2px solid var(--highlight);
-  border-radius: 10px;
-  color: white;
-  font-size: 14px;
+  border-radius: 15px;
+  color: white !important;
+  font-size: 17px;
   box-sizing: border-box;
 }
 
 textarea:focus,
 input[type="file"]:focus {
   outline: none;
-  border-color: var(--green);
+  border: 3px solid var(--green) !important;
   background-color: #333;
 }
 
 /* Substeps */
+/* Substep list com numeração visível */
 .substep-list {
-  padding-left: 1em;
+  padding-left: 40px;
+  list-style-position: inside; /* garante que a numeração apareça visível */
   margin-bottom: 20px;
+  border-radius: 30px;
 }
 
 .substep-list li {
@@ -127,22 +220,42 @@ input[type="file"]:focus {
 .checkbox-container {
   display: flex;
   align-items: center;
-  background-color: var(--gray);
+  background-color: var(--gray) !important;
   padding: 12px 16px;
-  border-radius: 8px;
-  border: 2px solid var(--highlight);
+  border-radius: 30px;
+  border: 3px solid var(--highlight) !important;
   color: white;
   cursor: pointer;
   transition: background-color 0.3s, border-color 0.3s;
 }
 
 .checkbox-container input[type="checkbox"] {
-  margin-right: 10px;
+  margin-right: 5px;
+  appearance: checkbox;
+  font-size: medium;
+  background-color: var(--highlight) !important;
+  color: var(--background-color) !important;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.checkbox-container input[type="checkbox"]::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 7px;
+  width: 6px;
+  height: 12px;
+  border: solid var(--text-color);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  display: none;
 }
 
 .checkbox-container.checked {
-  background-color: var(--green);
-  border-color: var(--green);
+  background-color: var(--green) !important;
+  border: 3px solid #155724 !important;
 }
 
 .substep-text {
@@ -153,7 +266,7 @@ input[type="file"]:focus {
 /* Feedback */
 .upload-feedback {
   margin-top: 8px;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .success {
@@ -187,11 +300,10 @@ input[type="file"]:focus {
 .btn {
   padding: 12px 20px;
   font-size: 16px;
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
+  border: 3px solid var(--highlight) !important;
+  border-radius: 40px !important;
   transition: background 0.3s, transform 0.2s;
-  color: white;
+  color: white !important;
 }
 
 .btn:hover {
@@ -206,36 +318,31 @@ input[type="file"]:focus {
 
 .btn-back {
   background-color: #6c757d;
-}
-
-.btn-save {
-  background-color: orange;
+  border: 3px solid var(--highlight);
+  color: var(--accent-color);
 }
 
 .btn-next {
-  background-color: var(--green);
+  border: 3px solid var(--highlight);
 }
 
 .btn-lessons {
   background-color: #17a2b8;
+  border: 3px solid var(--highlight);
 }
 
 .btn-dashboard {
   background-color: #444;
   margin-top: 20px;
+  color: white;
+  align-content: center;
+  justify-items: center;
+  justify-content: center;
+  text-align: center;
   display: block;
   margin-left: auto;
   margin-right: auto;
-}
-
-/* Save Confirmation */
-.saved-confirmation {
-  color: #28a745;
-  font-weight: bold;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  border: 3px solid var(--highlight) !important;
 }
 
 /* Responsividade */
@@ -263,16 +370,22 @@ input[type="file"]:focus {
 
 /* Substeps: título mais à direita */
 .substeps h3 {
-  margin-left: 25px;
-}
-
-/* Substep list com numeração visível */
-.substep-list {
-  padding-left: 40px;
-  list-style-position: inside; /* garante que a numeração apareça visível */
+  margin-left: 15px;
 }
 
 /* Labels de descrição e upload mais à direita */
 .form-group label {
-  margin-left: 20px;
+  margin-left: 15px;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.bi-person-circle {
+  font-size: medium;
 }

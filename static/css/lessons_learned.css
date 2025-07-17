@@ -1,8 +1,164 @@
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #f4f7fb;
+:root {
+  --primary-color: #4c5ca4;
+  --background-color: #121212;
+  --accent-color: #84acdb;
+  --hover-color: #809fd8;
+  --text-color: #f1f1f1;
+  --highlight: #3a8bff;
+}
+
+body, html {
   margin: 0;
   padding: 0;
+  height: 100%;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--background-color) !important;
+  color: var(--text-color);
+}
+
+/* NAVBAR – deixada como no original */
+.modern-navbar {
+  padding: 15px 30px;
+  border-radius: 16px;
+  margin: 20px;
+  border: 3px solid var(--highlight);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--highlight);
+  background-color: var(--background-color) !important;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.navbar-title {
+  font-weight: bold;
+  font-size: 20px;
+  color: var(--highlight);
+  text-align: center;
+  flex-grow: 1;
+}
+
+.nav-link,
+.left-link {
+  color: var(--highlight);
+  text-decoration: none;
+  font-weight: bold;
+  margin-right: 20px;
+}
+
+.nav-link:hover,
+.left-link:hover {
+  text-decoration: underline;
+}
+
+/* Botões */
+.user-button {
+  border: 2px solid var(--highlight) !important;
+  color: var(--highlight) !important;
+  border-radius: 30px;
+  padding: 6px 16px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  background-color: transparent;
+  backdrop-filter: blur(4px);
+}
+
+.user-button:hover,
+.user-button:focus {
+  background-color: var(--highlight);
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 0 10px var(--highlight);
+}
+
+.btn-primary,
+.btn-success {
+  border-radius: 30px;
+  padding: 6px 16px;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+}
+
+.btn-primary {
+  background-color: var(--highlight);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: #2f74d1;
+}
+
+.btn-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+}
+
+.btn-modern {
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-modern-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-modern-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-modern-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-modern-success:hover {
+  background-color: #1e7e34;
+}
+
+.btn-modern-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-modern-danger:hover {
+  background-color: #b21f2d;
+}
+
+/* Dropdown */
+.dropdown-menu {
+  border: 1px solid var(--highlight) !important;
+  background-color: var(--background-color) !important;
+  font-size: small;
+  color: var(--highlight) !important;
+  animation: fadeInDown 0.3s ease;
+}
+
+.dropdown-item {
+  color: var(--highlight) !important;
+}
+
+.dropdown-item:hover {
+  color: var(--accent-color) !important;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .lessons-container {
@@ -119,4 +275,91 @@ textarea {
 .flash.error {
   background-color: #f8d7da;
   color: #721c24;
+}
+
+
+.modern-navbar {
+  padding: 15px 30px;
+  border-radius: 16px;
+  margin: 20px;
+  border: 3px solid var(--highlight);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--highlight);
+  background-color: rgba(30, 30, 30, 0.75);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.navbar-title {
+  font-weight: bold;
+  font-size: 20px;
+  color: var(--highlight);
+  text-align: center;
+  flex-grow: 1;
+}
+
+.nav-link,
+.left-link {
+  color: var(--highlight);
+  text-decoration: none;
+  font-weight: bold;
+  margin-right: 20px;
+}
+
+.nav-link:hover,
+.left-link:hover {
+  text-decoration: underline;
+}
+
+.user-button {
+  border: 2px solid var(--highlight) !important;
+  color: var(--highlight) !important;
+  border-radius: 30px;
+  padding: 6px 16px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  background-color: transparent;
+  backdrop-filter: blur(4px);
+}
+
+.user-button:hover,
+.user-button:focus {
+  background-color: var(--highlight);
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 0 10px var(--highlight);
+}
+
+.dropdown-menu {
+  border: 1px solid var(--highlight) !important;
+  background-color: var(--background-color) !important;
+  font-size: small;
+  color: var(--text-color) !important;
+  animation: fadeInDown 0.3s ease;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-item {
+  color: #ccc;
+}
+
+.dropdown-item:hover {
+  background-color: var(--highlight);
+  color: white;
+}
+
+.bi-person-circle {
+  font-size: medium;
 }

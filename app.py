@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file
+from flask import Flask, jsonify, render_template, request, redirect, url_for, session, flash, send_file
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -46,6 +46,73 @@ def load_incident_steps():
         return json.load(f)
 
 
+def generate_uuid():
+    return str(uuid.uuid4())
+
+
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.String, primary_key=True, default=generate_uuid)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password_hash = db.Column(db.String(128), nullable=False)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+class Incident(db.Model):
+    __tablename__ = 'incidents'
+    id = db.Column(db.String, primary_key=True, default=generate_uuid)
+    incident_id = db.Column(db.String, unique=True, nullable=False)
+    incident_class = db.Column(db.String)
+    incident_type = db.Column(db.String)
+    start_datetime = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.String, default='in_progress')
+    percent_complete = db.Column(db.Integer, default=0)
+    user_id = db.Column(db.String, db.ForeignKey('users.id'), nullable=False)
+    user = db.relationship('User', backref='incidents')
+
+    steps = db.relationship('IncidentStep', backref='incident', cascade="all, delete-orphan", lazy=True)
+    evidences = db.relationship('Evidence', backref='incident', cascade="all, delete-orphan", lazy=True)
+    lessons_learned = db.relationship('LessonsLearned', backref='incident', uselist=False, cascade="all, delete-orphan")
+    sub_steps = db.relationship('SubStep', backref='incident', cascade="all, delete-orphan", lazy=True)
+
+class IncidentStep(db.Model):
+    __tablename__ = 'incident_steps'
+    id = db.Column(db.String, primary_key=True, default=generate_uuid)
+    incident_id = db.Column(db.String, db.ForeignKey('incidents.incident_id'), nullable=False)
+    step_id = db.Column(db.Integer, nullable=False)
+    step_description = db.Column(db.Text, nullable=False)
+    substeps = db.relationship('SubStep', backref='step', cascade="all, delete-orphan", lazy=True)
+
+class SubStep(db.Model):
+    __tablename__ = 'sub_steps'
+    id = db.Column(db.String, primary_key=True, default=generate_uuid)
+    incident_id = db.Column(db.String, db.ForeignKey('incidents.incident_id'), nullable=False)
+    step_id = db.Column(db.String, db.ForeignKey('incident_steps.step_id'), nullable=False)
+    sub_step_description = db.Column(db.Text, nullable=False)
+
+class Evidence(db.Model):
+    __tablename__ = 'evidence'
+    id = db.Column(db.String, primary_key=True, default=generate_uuid)
+    incident_id = db.Column(db.String, db.ForeignKey('incidents.incident_id'), nullable=False)
+    step_id = db.Column(db.String, db.ForeignKey('incident_steps.incident_id'), nullable=False)
+    attachment_name = db.Column(db.String)
+    upload_status = db.Column(db.String)
+    description = db.Column(db.Text)
+
+class LessonsLearned(db.Model):
+    __tablename__ = 'lessons_learned'
+    id = db.Column(db.String, primary_key=True, default=generate_uuid)
+    incident_id = db.Column(db.String, db.ForeignKey('incidents.incident_id'), nullable=False, unique=True)
+    improvements = db.Column(db.Text)
+    observations = db.Column(db.Text)
+    end_datetime = db.Column(db.DateTime, default=datetime.utcnow)
+
+with app.app_context():
+    db.create_all()
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -67,14 +134,9 @@ def register():
 
     return render_template('register.html')
 
-
 @app.route('/', methods=['GET', 'POST'])
 def index():
     return render_template('register.html')
-
-def generate_uuid():
-    return str(uuid.uuid4())
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -93,116 +155,64 @@ def login():
 
     return render_template('login.html')
 
-
-class User(db.Model):
-    __tablename__ = 'users'
-    id = db.Column(db.String, primary_key=True, default=generate_uuid)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128), nullable=False)
-
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-
-
-class Incident(db.Model):
-    __tablename__ = 'incidents'
-
-    id = db.Column(db.String, primary_key=True, default=generate_uuid)
-    incident_id = db.Column(db.String, unique=True, nullable=False)
-    incident_class = db.Column(db.String)
-    incident_type = db.Column(db.String)
-    start_datetime = db.Column(db.DateTime, default=datetime.utcnow)
-    status = db.Column(db.String, default='in_progress')
-    percent_complete = db.Column(db.Integer, default=0)
-
-    steps = db.relationship('IncidentStep', backref='incident', cascade="all, delete-orphan", lazy=True)
-    evidences = db.relationship('Evidence', backref='incident', cascade="all, delete-orphan", lazy=True)
-    lessons_learned = db.relationship('LessonsLearned', backref='incident', uselist=False, cascade="all, delete-orphan")
-    sub_steps = db.relationship('SubStep', backref='incident', cascade="all, delete-orphan", lazy=True)
-
-
-class IncidentStep(db.Model):
-    __tablename__ = 'incident_steps'
-
-    id = db.Column(db.String, primary_key=True, default=generate_uuid)
-    incident_id = db.Column(db.String, db.ForeignKey('incidents.incident_id'), nullable=False)
-    step_id = db.Column(db.Integer, nullable=False)
-    step_description = db.Column(db.Text, nullable=False)
-
-    substeps = db.relationship('SubStep', backref='step', cascade="all, delete-orphan", lazy=True)
-
-
-class SubStep(db.Model):
-    __tablename__ = 'sub_steps'
-
-    id = db.Column(db.String, primary_key=True, default=generate_uuid)
-    incident_id = db.Column(db.String, db.ForeignKey('incidents.incident_id'), nullable=False)
-    step_id = db.Column(db.String, db.ForeignKey('incident_steps.step_id'), nullable=False)
-    sub_step_description = db.Column(db.Text, nullable=False)
-
-
-class Evidence(db.Model):
-    __tablename__ = 'evidence'
-
-    id = db.Column(db.String, primary_key=True, default=generate_uuid)
-    incident_id = db.Column(db.String, db.ForeignKey('incidents.incident_id'), nullable=False)
-    step_id = db.Column(db.String, db.ForeignKey('incident_steps.incident_id'), nullable=False)
-    attachment_name = db.Column(db.String)
-    upload_status = db.Column(db.String)
-    description = db.Column(db.Text)
-
-
-class LessonsLearned(db.Model):
-    __tablename__ = 'lessons_learned'
-
-    id = db.Column(db.String, primary_key=True, default=generate_uuid)
-    incident_id = db.Column(db.String, db.ForeignKey('incidents.incident_id'), nullable=False, unique=True)
-    improvements = db.Column(db.Text)
-    observations = db.Column(db.Text)
-    end_datetime = db.Column(db.DateTime, default=datetime.utcnow)
-
-
-
-with app.app_context():
-    db.create_all()
-
-
-
 @app.route('/dashboard')
 def dashboard():
-    in_progress = Incident.query.filter(Incident.status != 'completed').all()
-    completed = LessonsLearned.query.filter(LessonsLearned.end_datetime.isnot(None)).all()
-    return render_template('dashboard.html', in_progress=in_progress, completed=completed)
+    if 'user' not in session:
+        flash('Precisas de iniciar sessão.', 'warning')
+        return redirect(url_for('login'))
 
+    current_user = User.query.filter_by(username=session['user']).first()
+    if not current_user:
+        flash('Utilizador inválido.', 'danger')
+        return redirect(url_for('login'))
+
+    user_id = current_user.id
+
+    in_progress = Incident.query.filter(
+        Incident.status != 'completed',
+        Incident.user_id == user_id
+    ).all()
+
+    completed = LessonsLearned.query \
+        .join(Incident, LessonsLearned.incident_id == Incident.incident_id) \
+        .filter(
+            Incident.user_id == user_id,
+            LessonsLearned.end_datetime.isnot(None)
+        ).all()
+
+    return render_template('dashboard.html', in_progress=in_progress, completed=completed)
 
 @app.route('/new_incident', methods=['GET', 'POST'])
 def new_incident():
+    if 'user' not in session:
+        flash('Precisas de iniciar sessão.', 'warning')
+        return redirect(url_for('login'))
+
+    current_user = User.query.filter_by(username=session['user']).first()
+    if not current_user:
+        flash('Utilizador inválido.', 'danger')
+        return redirect(url_for('login'))
+
     incident_class_data = load_incident_classes()
 
     if request.method == 'POST':
         selected_class = request.form['incident_class']
         selected_type = request.form['incident_type']
 
-        # Garante que incident_id seja sempre um número crescente
         last_incident = db.session.query(Incident).order_by(
             db.cast(Incident.incident_id, db.Integer).desc()
         ).first()
-
         new_id = int(last_incident.incident_id) + 1 if last_incident else 1
 
-        # Cria e salva o novo incidente
         new_incident = Incident(
             incident_id=str(new_id),
             incident_class=selected_class,
-            incident_type=selected_type
+            incident_type=selected_type,
+            user_id=current_user.id
         )
         db.session.add(new_incident)
         db.session.commit()
 
-        # Obtém os passos do template
         steps = get_steps_for_class_and_type(selected_class, selected_type)
 
         for i, s in enumerate(steps, start=1):
@@ -212,7 +222,7 @@ def new_incident():
                 step_description=s['step']
             )
             db.session.add(step)
-            db.session.flush()  # Necessário para obter step.id
+            db.session.flush()
 
             for sub in s.get('sub_steps', []):
                 substep = SubStep(
@@ -223,13 +233,9 @@ def new_incident():
                 db.session.add(substep)
 
         db.session.commit()
-        session.modified = True
-
         return redirect(url_for('incident_step', incident_id=new_id, step_id=1))
 
     return render_template('new_incident.html', incident_class=incident_class_data)
-
-
 
 def get_steps_for_class_and_type(incident_class, incident_type):
     all_data = load_incident_steps()
@@ -240,33 +246,42 @@ def get_steps_for_class_and_type(incident_class, incident_type):
                     return t['steps']
     return []
 
+
 @app.route('/incident/<int:incident_id>/step/<int:step_id>', methods=['GET', 'POST'])
 def incident_step(incident_id, step_id):
-
+    # Pega o incidente
     incident = Incident.query.filter_by(incident_id=str(incident_id)).first()
+    if not incident:
+        flash('Incidente não encontrado.', 'danger')
+        return redirect(url_for('dashboard'))
 
-    steps_db = IncidentStep.query.filter_by(incident_id=str(incident_id)).order_by(IncidentStep.id).all()
+    # Todos os passos para esse incidente
+    steps_db = IncidentStep.query.filter_by(incident_id=str(incident_id)).order_by(IncidentStep.step_id).all()
     total_steps = len(steps_db)
 
     if step_id < 1 or step_id > total_steps:
-        flash('Passo inválido.')
+        flash('Passo inválido.', 'danger')
         return redirect(url_for('dashboard'))
 
+    # Pega o passo atual
     step = steps_db[step_id - 1]
-    substeps_db = SubStep.query.filter_by(step_id=step.id).all()
+
+    # Substeps (agora usando step.id, que é UUID)
+    substeps_db = SubStep.query.filter_by(step_id=step.id, incident_id=str(incident_id)).all()
     substeps_list = [s.sub_step_description for s in substeps_db]
 
+    # Evidence existente
     evidence = Evidence.query.filter_by(incident_id=str(incident_id), step_id=step.id).first()
     evidence_text = evidence.description if evidence else ''
     evidence_attachment = evidence.attachment_name if evidence and evidence.attachment_name else ''
 
-    # Recupera substeps marcados salvos
+    # Substeps previamente marcados
     completed_substeps = []
     if evidence and evidence.upload_status and evidence.upload_status.startswith("json:"):
         try:
             completed_substeps = json.loads(evidence.upload_status[5:])
-        except:
-            completed_substeps = []
+        except Exception as e:
+            print(f"Erro ao carregar substeps do JSON: {e}")
 
     completed_steps = Evidence.query.filter(
         Evidence.incident_id == str(incident_id),
@@ -280,28 +295,22 @@ def incident_step(incident_id, step_id):
         file = request.files.get('file')
 
         if not evidence:
-            evidence = Evidence(
-                incident_id=str(incident_id),
-                step_id=step.id
-            )
+            evidence = Evidence(incident_id=str(incident_id), step_id=step.id)
 
         evidence.description = evidence_text
+        evidence.upload_status = "json:" + json.dumps(checked_substeps)
 
         if file and file.filename:
             filename = secure_filename(file.filename)
             upload_dir = os.path.join(app.config['UPLOAD_FOLDER'], str(incident_id), str(step_id))
             os.makedirs(upload_dir, exist_ok=True)
-            filepath = os.path.join(upload_dir, filename)
-            file.save(filepath)
+            file.save(os.path.join(upload_dir, filename))
             evidence.attachment_name = filename
-
-        # Salva os substeps marcados como JSON dentro de upload_status (sem interferir no campo description)
-        evidence.upload_status = "json:" + json.dumps(checked_substeps)
 
         db.session.add(evidence)
         db.session.commit()
 
-        # Recalcula progresso
+        # Recalcular progresso
         has_attachment = bool(evidence.attachment_name)
         is_step_complete = bool(evidence_text and has_attachment and checked_substeps)
 
@@ -309,23 +318,19 @@ def incident_step(incident_id, step_id):
             Evidence.incident_id == str(incident_id),
             Evidence.attachment_name.isnot(None)
         ).count()
+
         incident.percent_complete = int((completed_steps / total_steps) * 50)
+        db.session.add(incident)
         db.session.commit()
 
         if action == 'back':
-            return redirect(url_for('incident_step', incident_id=incident_id, step_id=int(step_id) - 1))
-
-        elif action == 'save':
-            if is_step_complete:
-                flash('Passo salvo com sucesso.', 'success')
-            else:
-                flash('Passo parcialmente salvo. Complete todos os campos para avançar.', 'warning')
+            return redirect(url_for('incident_step', incident_id=incident_id, step_id=step_id - 1))
 
         elif action == 'next':
             if is_step_complete:
-                return redirect(url_for('incident_step', incident_id=incident_id, step_id=int(step_id) + 1))
+                return redirect(url_for('incident_step', incident_id=incident_id, step_id=step_id + 1))
             else:
-                flash('Você precisa salvar e anexar a evidência e marcar pelo menos um substep antes de prosseguir.', 'danger')
+                flash('Você precisa preencher todos os campos, anexar e marcar substeps.', 'danger')
 
         elif action == 'lessons_learned':
             return redirect(url_for('lessons_learned', incident_id=incident_id))
@@ -377,49 +382,48 @@ def upload_file():
 @app.route('/lessons_learned/<incident_id>', methods=['GET', 'POST'])
 def lessons_learned(incident_id):
     incident = Incident.query.filter_by(incident_id=incident_id).first_or_404()
+    incident_class = incident.incident_class
+    incident_type = incident.incident_type
+
 
     if not incident.lessons_learned:
-        # Cria um registro vazio se não existir
         lessons = LessonsLearned(incident_id=incident.incident_id)
         db.session.add(lessons)
         db.session.commit()
-
-    lessons = incident.lessons_learned  # garantir que sempre existe
+    else:
+        lessons = incident.lessons_learned
 
     if request.method == 'POST':
         improvements = request.form.get('improvements', '').strip()
         observations = request.form.get('observations', '').strip()
         action = request.form.get('action')
 
-        saved = False
+        # Atualiza os dados do LessonsLearned
+        lessons.improvements = improvements
+        lessons.observations = observations
 
-        # Atualizar conteúdo de Lessons Learned
-        incident.percent_complete = 50  # steps
-        if lessons.improvements:
-            incident.percent_complete += 25
-            saved = True
-        if lessons.observations:
-            incident.percent_complete += 25
-            saved = True
+        # Atualiza o progresso do incidente
+        percent = 50  # Assume que os steps já valem 50%
 
-        if improvements and observations:
+        if improvements:
+            percent += 25
+        if observations:
+            percent += 25
+
+        incident.percent_complete = percent
+
+        if percent == 100:
             incident.status = 'completed'
             lessons.end_datetime = datetime.now()
-
-        if incident.percent_complete == 100:
-            incident.status = 'completed'
-            lessons.end_datetime = datetime.now()
-            db.session.commit()
-
-        if saved:
-            db.session.commit()
-            flash("Saved successfully!", "success")
-            return render_template('lessons_learned.html', incident=incident, lessons=lessons)
 
         if action == 'generate_report':
             return redirect(url_for('generate_report', incident_id=incident.incident_id))
+        if action == 'save':
+            db.session.commit()
+            session.modified = True
+            flash("Salvo com sucesso!", "success")
 
-    return render_template('lessons_learned.html', incident=incident, lessons=lessons)
+    return render_template('lessons_learned.html', incident_class=incident_class, incident_type=incident_type, incident=incident, lessons=lessons)
 
 
 def generate_docx_with_data(data, template_path):
@@ -532,21 +536,24 @@ def generate_report(incident_id):
     return send_file(final_pdf_path, as_attachment=True, download_name=filename)
 
 
-@app.route('/delete_incident/<incident_id>', methods=['DELETE'])
+@app.route('/delete_incident/<int:incident_id>', methods=['POST'])
 def delete_incident(incident_id):
     try:
-        IncidentStep.query.filter_by(incident_id=incident_id).delete()
-        Evidence.query.filter_by(incident_id=incident_id).delete()
-        SubStep.query.filter_by(incident_id=incident_id).delete()
-        LessonsLearned.query.filter_by(incident_id=incident_id).delete()
-        Incident.query.filter_by(incident_id=incident_id).delete()
+        # Buscar o incidente com status 'completed'
+        incident = Incident.query.filter_by(incident_id=incident_id, status='completed').first()
 
+        if not incident:
+            return jsonify({'status': 'error', 'message': 'Incidente não encontrado ou não está concluído'}), 404
+
+        db.session.delete(incident)
         db.session.commit()
+        session.modified = True
+
         return jsonify({'status': 'success'})
+
     except Exception as e:
         db.session.rollback()
         return jsonify({'status': 'error', 'message': str(e)}), 500
-
 
 
 @app.route('/logout')
