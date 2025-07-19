@@ -5,10 +5,8 @@
   <title>Incident Step {{ step_id }}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/incident_step.css') }}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <!-- Bootstrap CSS + Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
@@ -42,65 +40,52 @@
 
   <h1>Step {{ step_id }}: {{ step_title }}</h1>
 
-  <form method="POST" enctype="multipart/form-data">
-    {% if substeps %}
-    <div class="substeps">
-      <h3 style="margin-left: 15px;">Substeps:</h3>
-      <ol class="substep-list" style="padding-left: 40px; list-style-position: inside;">
-        {% for substep in substeps %}
-        <li>
-          <label class="checkbox-container">
-            <input type="checkbox" name="substeps" value="{{ substep }}"
-              {% if substep in completed_substeps %}checked{% endif %}
-              onchange="toggleCheckboxStyle(this)">
-            <span class="checkmark"></span>
-            <span class="substep-text">{{ substep }}</span>
-          </label>
-        </li>
-        {% endfor %}
-      </ol>
+ <form method="POST" enctype="multipart/form-data">
+  {% if substeps %}
+  <div class="substeps">
+    <h3 style="margin-left: 15px;">Substeps:</h3>
+    <ol class="substep-list" style="padding-left: 40px; list-style-position: inside;">
+      {% for substep in substeps %}
+      <li>
+        <label class="checkbox-container">
+          <input type="checkbox" name="substeps" value="{{ substep }}"
+            {% if substep in completed_substeps %}checked{% endif %}
+            onchange="toggleCheckboxStyle(this)">
+          <span class="checkmark"></span>
+          <span class="substep-text">{{ substep }}</span>
+        </label>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+  {% endif %}
+
+  <div class="form-group">
+    <label for="evidence" style="margin-left: 20px;">Evidence Description:</label>
+    <textarea id="evidence" onchange="toggleEvidenceStyle(this)" class="evidence" name="evidence" rows="5" required>{{ evidence_description or '' }}</textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="file" style="margin-left: 20px;">Attach Evidence File:</label>
+    <input type="file" class="file" id="file" name="file" onchange="showUploadFeedback(event)">
+    <div id="upload-feedback" class="upload-feedback" data-saved="{{ 'true' if evidence_attachment else 'false' }}">
+      {% if evidence_attachment %}
+      <span class="success"><i class="fa-solid fa-check"></i> File saved: {{ evidence_attachment }}</span>
+      {% endif %}
     </div>
-    {% endif %}
+  </div>
 
-    <div class="form-group">
-      <label for="evidence" style="margin-left: 20px;">Evidence Description:</label>
-      <textarea id="evidence" onchange="toggleEvidenceStyle(this)" class="evidence" name="evidence" rows="5" required>{{ evidence_description or '' }}</textarea>
-    </div>
-
-    <div class="form-group">
-      <label for="file" style="margin-left: 20px;">Attach Evidence File:</label>
-      <input type="file" class="file" id="file" name="file" onchange="showUploadFeedback(event)">
-      <div id="upload-feedback" class="upload-feedback" data-saved="{{ 'true' if evidence_attachment else 'false' }}">
-        {% if evidence_attachment %}
-        <span class="success"><i class="fa-solid fa-check"></i> File saved: {{ evidence_attachment }}</span>
-        {% endif %}
-      </div>
-    </div>
-
-    <div class="button-bar">
-      <div class="left-buttons">
-        {% if step_id > 1 %}
-        <button type="submit" name="action" value="back" formnovalidate class="btn btn-back">
-          <i class="fa-solid fa-arrow-left"></i> Back
-        </button>
-        {% else %}
-        <a href="{{ url_for('new_incident') }}" class="btn btn-back">
-          <i class="fa-solid fa-arrow-left"></i> Change Class/Type
-        </a>
-        {% endif %}
-      </div>
-
-      <div class="right-buttons">
-        {% if not is_last_step %}
-        <button type="submit" name="action" value="next" class="btn btn-next" disabled>
-          Next <i class="fa-solid fa-arrow-right"></i>
-        </button>
-        {% else %}
-        <button type="submit" name="action" value="lessons_learned" class="btn btn-next">
-          Lessons Learned <i class="fa-solid fa-arrow-right"></i>
-        </button>
-        {% endif %}
-      </div>
+  <div class="button-bar">
+    <div class="left-buttons">
+      {% if step_id > 1 %}
+      <button type="submit" name="action" value="back" formnovalidate class="btn btn-back">
+        <i class="fa-solid fa-arrow-left"></i> Back
+      </button>
+      {% else %}
+      <button type="submit" name="action" value="change_type" formnovalidate class="btn btn-back">
+    <i class="fa-solid fa-arrow-left"></i> Change Class/Type
+  </button>
+      {% endif %}
     </div>
 
     <div class="center-button">
@@ -108,7 +93,20 @@
         <i class="fa-solid fa-house"></i> Dashboard
       </button>
     </div>
-  </form>
+
+    <div class="right-buttons">
+      {% if not is_last_step %}
+      <button type="submit" name="action" value="next" class="btn btn-next" disabled>
+        Next <i class="fa-solid fa-arrow-right"></i>
+      </button>
+     {% else %}
+      <button type="submit" name="action" value="lessons_learned" class="btn btn-next" disabled>
+        Lessons Learned <i class="fa-solid fa-arrow-right"></i>
+      </button>
+      {% endif %}
+    </div>
+  </div>
+</form>
 </div>
 
 <script>
@@ -117,20 +115,24 @@ const allowedExtensions = ['png', 'jpg', 'jpeg'];
 function showUploadFeedback(event) {
   const file = event.target.files[0];
   const feedback = document.getElementById("upload-feedback");
+  const fileInput = document.getElementById("file");
 
   if (file) {
     const extension = file.name.split('.').pop().toLowerCase();
     if (allowedExtensions.includes(extension)) {
       feedback.innerHTML = `<span class="success"><i class="fa-solid fa-check"></i> File ready: ${file.name}</span>`;
       feedback.dataset.saved = "true";
+      fileInput.classList.add("file-uploaded");
     } else {
       feedback.innerHTML = `<span class="fail"><i class="fa-solid fa-xmark"></i> Invalid file type</span>`;
       feedback.dataset.saved = "false";
-      event.target.value = ""; // clear the file input
+      fileInput.classList.remove("file-uploaded");
+      event.target.value = "";
     }
   } else {
     feedback.innerHTML = `<span class="fail"><i class="fa-solid fa-xmark"></i> Upload failed</span>`;
     feedback.dataset.saved = "false";
+    fileInput.classList.remove("file-uploaded");
   }
 
   validateNextButton();
@@ -145,6 +147,16 @@ function toggleCheckboxStyle(checkbox) {
   validateNextButton();
 }
 
+function toggleEvidenceStyle(evidence) {
+  const hasValue = evidence.value.trim() !== '';
+  if (hasValue) {
+    evidence.parentElement.classList.add("evidenceDescr");
+  } else {
+    evidence.parentElement.classList.remove("evidenceDescr");
+  }
+  validateNextButton();
+}
+
 function validateNextButton() {
   const substepCheckboxes = document.querySelectorAll('input[name="substeps"]:checked');
   const evidenceText = document.getElementById('evidence').value.trim();
@@ -154,10 +166,11 @@ function validateNextButton() {
 
   const isValid = substepCheckboxes.length > 0 && evidenceText.length > 0 && (fileSelected || fileAlreadySaved);
 
-  const nextButton = document.querySelector('button[name="action"][value="next"]');
-  if (nextButton) {
-    nextButton.disabled = !isValid;
-  }
+  const nextButtons = document.querySelectorAll('.btn-next');
+  nextButtons.forEach(button => {
+    button.disabled = !isValid;
+    button.classList.toggle("active", isValid);
+  });
 }
 
 window.addEventListener('DOMContentLoaded', function () {
@@ -167,37 +180,19 @@ window.addEventListener('DOMContentLoaded', function () {
   const checkboxes = document.querySelectorAll('input[name="substeps"]');
   checkboxes.forEach(cb => cb.addEventListener('change', validateNextButton));
 
+  const evidence = document.getElementById('evidence');
+  if (evidence.value.trim() !== '') {
+    evidence.parentElement.classList.add("evidenceDescr");
+  }
+
+  const fileInput = document.getElementById('file');
+  const fileSaved = document.getElementById('upload-feedback').dataset.saved === 'true';
+  if (fileSaved) {
+    fileInput.classList.add("file-uploaded");
+  }
+
   validateNextButton();
 });
-
-function toggleEvidenceStyle(evidence) {
-  const hasValue = evidence.value.trim() !== '';
-
-  if (hasValue) {
-    evidence.parentElement.classList.add("evidenceDescr");
-  } else {
-    evidence.parentElement.classList.remove("evidenceDescr");
-  }
-
-  validateNextButton();
-}
-
-  function toggleDropdown() {
-    const dropdown = document.getElementById("userDropdown");
-    dropdown.classList.toggle("show");
-  }
-
-  // Fechar dropdown ao clicar fora
-  window.onclick = function(event) {
-    if (!event.target.matches('.user-button')) {
-      let dropdowns = document.getElementsByClassName("dropdown-menu");
-      for (let i = 0; i < dropdowns.length; i++) {
-        dropdowns[i].classList.remove('show');
-      }
-    }
-  }
-
-
 </script>
 </body>
 </html>

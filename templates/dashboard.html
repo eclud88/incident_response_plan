@@ -69,7 +69,19 @@
                   <td>{{ i.status }}</td>
                   <td>{{ i.start_datetime.strftime('%d/%m/%Y %H:%M') }}</td>
                   <td>{{ i.percent_complete or 0 }}%</td>
-                  <td><a href="{{ url_for('incident_step', incident_id=i.incident_id, step_id=1) }}" class="btn btn-modern btn-modern-primary btn-sm">Continue</a></td>
+                  <td>
+  {% if i.next_step == 'done' %}
+    <a href="{{ url_for('lessons_learned', incident_id=i.incident_id) }}"
+       class="btn btn-modern btn-modern-primary btn-sm">▶️ Continue</a>
+  {% elif i.next_step %}
+    <a href="{{ url_for('incident_step', incident_id=i.incident_id, step_id=i.next_step) }}"
+       class="btn btn-modern btn-modern-primary btn-sm">▶️ Continue</a>
+  {% else %}
+    <span class="text-muted">No steps</span>
+  {% endif %}
+</td>
+
+
                 </tr>
                 {% endfor %}
               </tbody>
